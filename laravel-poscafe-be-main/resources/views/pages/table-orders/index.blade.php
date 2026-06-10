@@ -9,7 +9,7 @@
         <div class="col-md-4">
             <select name="status" class="form-select">
                 <option value="">Semua aktif</option>
-                @foreach (['awaiting_confirmation','awaiting_payment','paid','preparing','ready'] as $s)
+                @foreach (['awaiting_confirmation','awaiting_payment','paid','preparing'] as $s)
                     <option value="{{ $s }}" @selected(request('status') === $s)>{{ $s }}</option>
                 @endforeach
             </select>

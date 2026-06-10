@@ -120,10 +120,10 @@ class Order extends Model
     public function statusLabel(): string
     {
         return match ($this->status) {
-            self::STATUS_PAID => 'Lunas',
+            self::STATUS_PAID => 'Pesanan masuk',
             self::STATUS_PENDING, self::STATUS_AWAITING_PAYMENT => 'Menunggu bayar',
-            self::STATUS_AWAITING_CONFIRMATION => 'Menunggu konfirmasi',
-            self::STATUS_PREPARING => 'Disiapkan',
+            self::STATUS_AWAITING_CONFIRMATION => 'Menunggu lunas',
+            self::STATUS_PREPARING => 'Diproses',
             self::STATUS_READY => 'Siap disajikan',
             self::STATUS_COMPLETED => 'Selesai',
             self::STATUS_CANCELLED => 'Dibatalkan',

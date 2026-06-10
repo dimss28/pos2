@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
 import '../../../core/components/app_button.dart';
-import '../../../core/components/feedback.dart';
 import '../../../core/components/method_badge.dart';
 import '../../../core/components/product_img.dart';
 import '../../../core/extensions/int_ext.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../core/services/printer_service.dart';
-import '../../../data/dataoutputs/cwb_print.dart';
-import '../../order/models/order_model.dart';
 import '../pages/transaction_detail_page.dart';
+import 'history_receipt_helper.dart';
 
 /// Single transaction row in HistoryPage. Collapsed shows id+time+method
 /// badge+total+chev; expanded reveals item list + 3-action row.
@@ -43,37 +39,8 @@ class HistoryTransactionCard extends StatelessWidget {
     return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _reprint(BuildContext context) async {
-    try {
-      final connected = await PrinterService.instance.ensureConnected();
-      if (!connected) {
-        if (context.mounted) {
-          AppSnackbar.error(context, 'Printer belum terhubung. Pair dulu di Pengaturan > Printer.');
-        }
-        return;
-      }
-      final paperSize = await PrinterService.instance.currentPaperSize();
-      final branding = await PrinterService.instance.getBranding();
-      final bytes = await CwbPrint.instance.printOrderV2(
-        data.orders,
-        data.totalQuantity,
-        data.totalPrice,
-        data.paymentMethod,
-        data.nominalBayar,
-        data.namaKasir,
-        'Walk-in',
-        paperSize: paperSize,
-        branding: branding,
-      );
-      await PrintBluetoothThermal.writeBytes(bytes);
-      if (context.mounted) {
-        AppSnackbar.success(context, 'Struk dikirim ke printer');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        AppSnackbar.error(context, 'Gagal cetak: $e');
-      }
-    }
+  Future<void> _openStrukMenu(BuildContext context) async {
+    await showHistoryStrukMenu(context, data);
   }
 
   int _hueFor(int? id) => ((id ?? 0) * 47) % 360;
@@ -256,12 +223,12 @@ class HistoryTransactionCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        flex: 2,
                         child: AppButton(
-                          label: 'Cetak ulang',
-                          leadingIcon: Icons.print_outlined,
+                          label: 'Struk',
+                          leadingIcon: Icons.receipt_long_outlined,
+                          trailingIcon: Icons.keyboard_arrow_down_rounded,
                           size: AppButtonSize.sm,
-                          onPressed: () => _reprint(context),
+                          onPressed: () => _openStrukMenu(context),
                         ),
                       ),
                     ],

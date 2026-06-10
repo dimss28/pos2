@@ -865,7 +865,7 @@ async function pollStatus() {
     const data = await res.json();
     if (data.status === 'paid') {
         clearInterval(pollTimer);
-        showMsg('Pembayaran berhasil! Pesanan sedang disiapkan.', false);
+        showMsg('Pembayaran berhasil! Pesanan menunggu diproses kasir.', false);
     }
 }
 

@@ -46,7 +46,7 @@ class TableOrderController extends Controller
             'confirmed_at' => now(),
         ]);
 
-        return back()->with('success', __('Pembayaran transfer dikonfirmasi.'));
+        return back()->with('success', __('Pesanan ditandai lunas.'));
     }
 
     public function reject(Request $request, Order $order)
@@ -67,9 +67,8 @@ class TableOrderController extends Controller
         ]);
 
         $allowed = match ($order->status) {
-            Order::STATUS_PAID => ['preparing', 'cancelled'],
-            Order::STATUS_PREPARING => ['ready', 'cancelled'],
-            Order::STATUS_READY => ['completed', 'cancelled'],
+            Order::STATUS_PAID, Order::STATUS_AWAITING_CONFIRMATION => ['preparing', 'cancelled'],
+            Order::STATUS_PREPARING, Order::STATUS_READY => ['completed', 'cancelled'],
             default => [],
         };
 
@@ -77,7 +76,11 @@ class TableOrderController extends Controller
             return back()->with('error', __('Transisi status tidak valid.'));
         }
 
-        $order->update(['status' => $data['status']]);
+        $updates = ['status' => $data['status']];
+        if ($data['status'] === 'preparing' && ! $order->amount_paid) {
+            $updates['amount_paid'] = $order->total_price;
+        }
+        $order->update($updates);
 
         return back()->with('success', __('Status pesanan diperbarui.'));
     }

@@ -49,24 +49,6 @@ class _TableOrdersPageState extends State<TableOrdersPage> {
     );
   }
 
-  Future<void> _confirm(TableOrderModel o) async {
-    final ok = await AppConfirm.show(
-      context,
-      title: 'Terima pembayaran?',
-      body: '${o.tableLabel ?? 'Meja'} — ${o.totalPrice.currencyFormatRp.trim()}',
-      confirmLabel: 'Terima',
-    );
-    if (!ok || !mounted) return;
-    final result = await _ds.confirm(o.id);
-    result.fold(
-      (msg) => AppSnackbar.error(context, msg),
-      (_) {
-        AppSnackbar.success(context, 'Pembayaran dikonfirmasi');
-        _load();
-      },
-    );
-  }
-
   Future<void> _reject(TableOrderModel o) async {
     final ok = await AppConfirm.show(
       context,
@@ -76,7 +58,7 @@ class _TableOrdersPageState extends State<TableOrdersPage> {
       destructive: true,
     );
     if (!ok || !mounted) return;
-    final result = await _ds.reject(o.id);
+    final result = await _ds.updateStatus(o.id, 'cancelled');
     result.fold(
       (msg) => AppSnackbar.error(context, msg),
       (_) {
@@ -126,7 +108,6 @@ class _TableOrdersPageState extends State<TableOrdersPage> {
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (_, i) => _OrderCard(
                           order: _items![i],
-                          onConfirm: () => _confirm(_items![i]),
                           onReject: () => _reject(_items![i]),
                           onAdvance: (s) => _advance(_items![i], s),
                         ),
@@ -138,13 +119,11 @@ class _TableOrdersPageState extends State<TableOrdersPage> {
 
 class _OrderCard extends StatelessWidget {
   final TableOrderModel order;
-  final VoidCallback onConfirm;
   final VoidCallback onReject;
   final void Function(String status) onAdvance;
 
   const _OrderCard({
     required this.order,
-    required this.onConfirm,
     required this.onReject,
     required this.onAdvance,
   });
@@ -200,13 +179,18 @@ class _OrderCard extends StatelessWidget {
             Text('Ada bukti transfer', style: AppTypography.bodyS.copyWith(color: p.warning)),
           ],
           const SizedBox(height: 10),
-          if (order.status == 'awaiting_confirmation') ...[
+          if (order.status == 'awaiting_payment') ...[
+            Text(
+              'Menunggu pelanggan bayar QRIS',
+              style: AppTypography.bodyS.copyWith(color: p.onSurfaceVar),
+            ),
+          ] else if (order.status == 'paid' || order.status == 'awaiting_confirmation') ...[
             Row(
               children: [
                 Expanded(
                   child: AppButton(
-                    label: 'Terima',
-                    onPressed: onConfirm,
+                    label: 'Diproses',
+                    onPressed: () => onAdvance('preparing'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -219,11 +203,7 @@ class _OrderCard extends StatelessWidget {
                 ),
               ],
             ),
-          ] else if (order.status == 'paid') ...[
-            AppButton(label: 'Mulai siapkan', onPressed: () => onAdvance('preparing')),
-          ] else if (order.status == 'preparing') ...[
-            AppButton(label: 'Siap disajikan', onPressed: () => onAdvance('ready')),
-          ] else if (order.status == 'ready') ...[
+          ] else if (order.status == 'preparing' || order.status == 'ready') ...[
             AppButton(label: 'Selesai', onPressed: () => onAdvance('completed')),
           ],
         ],

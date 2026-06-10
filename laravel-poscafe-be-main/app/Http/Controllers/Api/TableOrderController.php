@@ -65,9 +65,8 @@ class TableOrderController extends Controller
         ]);
 
         $allowed = match ($order->status) {
-            Order::STATUS_PAID => ['preparing', 'cancelled'],
-            Order::STATUS_PREPARING => ['ready', 'cancelled'],
-            Order::STATUS_READY => ['completed', 'cancelled'],
+            Order::STATUS_PAID, Order::STATUS_AWAITING_CONFIRMATION => ['preparing', 'cancelled'],
+            Order::STATUS_PREPARING, Order::STATUS_READY => ['completed', 'cancelled'],
             default => [],
         };
 
@@ -75,7 +74,11 @@ class TableOrderController extends Controller
             return ApiResponse::error('Transisi status tidak valid.', 422);
         }
 
-        $order->update(['status' => $data['status']]);
+        $updates = ['status' => $data['status']];
+        if ($data['status'] === 'preparing' && ! $order->amount_paid) {
+            $updates['amount_paid'] = $order->total_price;
+        }
+        $order->update($updates);
 
         return ApiResponse::success(new OrderResource($order->fresh()));
     }

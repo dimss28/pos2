@@ -94,14 +94,14 @@ class GuestOrderController extends Controller
                 'cash_session_id' => null,
                 'payment_method' => $data['payment_method'],
                 'status' => $data['payment_method'] === 'transfer'
-                    ? Order::STATUS_AWAITING_CONFIRMATION
+                    ? Order::STATUS_PAID
                     : Order::STATUS_AWAITING_PAYMENT,
                 'subtotal' => $subtotal,
                 'discount' => 0,
                 'discount_amount' => 0,
                 'tax' => 0,
                 'total_price' => $subtotal,
-                'amount_paid' => 0,
+                'amount_paid' => $data['payment_method'] === 'transfer' ? $subtotal : 0,
                 'change_amount' => 0,
                 'total_item' => $totalQty,
                 'customer_name' => $data['customer_name'] ?? null,
@@ -127,7 +127,7 @@ class GuestOrderController extends Controller
                     'success' => true,
                     'order_id' => $order->id,
                     'status' => $order->status,
-                    'message' => 'Pesanan dikirim. Menunggu konfirmasi kasir.',
+                    'message' => 'Pesanan dikirim. Menunggu diproses kasir.',
                 ]);
             }
 

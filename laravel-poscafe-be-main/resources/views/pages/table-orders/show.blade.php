@@ -60,25 +60,27 @@
             @endif
         </div>
 
-        @if ($order->status === App\Models\Order::STATUS_AWAITING_CONFIRMATION)
-            <div class="card-clean mb-3 border-warning">
-                <h6 class="fw-bold">Konfirmasi Transfer</h6>
-                <p class="small text-muted">Cek rekening, lalu terima atau tolak.</p>
-                <form method="POST" action="{{ route('table-order.confirm', $order) }}" class="d-inline">@csrf<button class="btn btn-success w-100 mb-2">Terima pembayaran</button></form>
-                <form method="POST" action="{{ route('table-order.reject', $order) }}" onsubmit="return confirm('Tolak pesanan ini?')">@csrf<button class="btn btn-outline-danger w-100">Tolak</button></form>
+        @if ($order->status === App\Models\Order::STATUS_AWAITING_PAYMENT)
+            <div class="card-clean mb-3 border-secondary">
+                <h6 class="fw-bold">Menunggu bayar</h6>
+                <p class="small text-muted mb-0">Pelanggan belum menyelesaikan pembayaran QRIS.</p>
             </div>
         @endif
 
-        @if (in_array($order->status, [App\Models\Order::STATUS_PAID, App\Models\Order::STATUS_PREPARING, App\Models\Order::STATUS_READY], true))
+        @if (in_array($order->status, [App\Models\Order::STATUS_PAID, App\Models\Order::STATUS_AWAITING_CONFIRMATION], true))
             <div class="card-clean">
-                <h6 class="fw-bold">Proses pesanan</h6>
-                @if ($order->status === App\Models\Order::STATUS_PAID)
-                    <form method="POST" action="{{ route('table-order.status', $order) }}">@csrf<input type="hidden" name="status" value="preparing"><button class="btn btn-primary w-100 mb-2">Mulai siapkan</button></form>
-                @elseif ($order->status === App\Models\Order::STATUS_PREPARING)
-                    <form method="POST" action="{{ route('table-order.status', $order) }}">@csrf<input type="hidden" name="status" value="ready"><button class="btn btn-primary w-100 mb-2">Siap disajikan</button></form>
-                @elseif ($order->status === App\Models\Order::STATUS_READY)
-                    <form method="POST" action="{{ route('table-order.status', $order) }}">@csrf<input type="hidden" name="status" value="completed"><button class="btn btn-success w-100">Selesai</button></form>
-                @endif
+                <h6 class="fw-bold">Pesanan masuk</h6>
+                <p class="small text-muted mb-3">Pelanggan sudah bayar. Proses atau tolak pesanan.</p>
+                <form method="POST" action="{{ route('table-order.status', $order) }}" class="mb-2">@csrf<input type="hidden" name="status" value="preparing"><button class="btn btn-primary w-100">Diproses</button></form>
+                <form method="POST" action="{{ route('table-order.status', $order) }}" onsubmit="return confirm('Tolak pesanan ini?')">@csrf<input type="hidden" name="status" value="cancelled"><button class="btn btn-outline-danger w-100">Tolak</button></form>
+            </div>
+        @endif
+
+        @if (in_array($order->status, [App\Models\Order::STATUS_PREPARING, App\Models\Order::STATUS_READY], true))
+            <div class="card-clean">
+                <h6 class="fw-bold">Pesanan diproses</h6>
+                <p class="small text-muted mb-3">Tekan Selesai setelah pesanan sampai ke meja.</p>
+                <form method="POST" action="{{ route('table-order.status', $order) }}">@csrf<input type="hidden" name="status" value="completed"><button class="btn btn-success w-100">Selesai</button></form>
             </div>
         @endif
     </div>
