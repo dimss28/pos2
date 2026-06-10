@@ -15,7 +15,7 @@ class CategoryResource extends JsonResource
             'slug' => $this->slug,
             'icon' => $this->icon,
             'color' => $this->color,
-            'products_count' => $this->whenCounted('products'),
+            'products_count' => (int) ($this->products_count ?? 0),
         ];
     }
 }

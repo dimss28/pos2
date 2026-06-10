@@ -51,10 +51,30 @@ class _SplashPageState extends State<SplashPage> {
   // Captured states (latest seen).
   CashSessionState _shiftState = const CashSessionState.initial();
 
+  Timer? _routeTimeout;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _start());
+    // Jangan biarkan splash menggantung kalau sync/shift lambat atau error.
+    _routeTimeout = Timer(const Duration(seconds: 20), _forceRoute);
+  }
+
+  @override
+  void dispose() {
+    _routeTimeout?.cancel();
+    super.dispose();
+  }
+
+  void _forceRoute() {
+    if (_routed) return;
+    _syncBootstrapDone = true;
+    if (!_shiftResolved) {
+      _shiftResolved = true;
+      _shiftState = const CashSessionState.noSession(null);
+    }
+    _maybeRoute();
   }
 
   Future<void> _start() async {

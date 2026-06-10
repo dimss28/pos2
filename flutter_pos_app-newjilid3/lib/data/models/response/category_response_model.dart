@@ -59,15 +59,35 @@ class Category {
   String toJson() => json.encode(toMap());
 
   factory Category.fromMap(Map<String, dynamic> json) => Category(
-        id: (json["id"] as num?)?.toInt() ?? 0,
-        name: (json["name"] as String?) ?? '',
-        description: json["description"] as String?,
-        icon: (json["icon"] as String?) ?? 'tag',
-        color: (json["color"] as String?) ?? '#3B82F6',
-        sortOrder: (json["sort_order"] as num?)?.toInt() ?? 0,
-        isActive: (json["is_active"] as bool?) ?? true,
-        productsCount: (json["products_count"] as num?)?.toInt(),
+        id: _asInt(json['id']) ?? 0,
+        name: (json['name'] as String?) ?? '',
+        description: json['description'] as String?,
+        icon: (json['icon'] as String?) ?? 'tag',
+        color: (json['color'] as String?) ?? '#3B82F6',
+        sortOrder: _asInt(json['sort_order']) ?? 0,
+        isActive: _asBool(json['is_active']) ?? true,
+        productsCount: _asInt(json['products_count']),
       );
+
+  static int? _asInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  static bool? _asBool(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final v = value.toLowerCase();
+      if (v == '1' || v == 'true') return true;
+      if (v == '0' || v == 'false') return false;
+    }
+    return null;
+  }
 
   factory Category.fromLocal(Map<String, dynamic> json) => Category(
         id: (json["category_id"] as num?)?.toInt() ?? 0,

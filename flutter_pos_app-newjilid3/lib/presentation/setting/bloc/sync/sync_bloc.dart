@@ -118,24 +118,25 @@ class SyncBloc extends Bloc<SyncEvent, SyncState> {
   Future<void> _onBootstrap(
       _Bootstrap event, Emitter<SyncState> emit) async {
     var snap = await _readSnapshotFromDisk();
-    // CRITICAL: set inProgress before the first emit so the SplashPage gate
-    // doesn't read the (default-null) disk snapshot and route prematurely.
-    // The marker is cleared at the end after all pulls complete.
     snap = snap.copyWith(inProgress: 'bootstrap');
     _emit(emit, snap);
 
     if (kDebugMode) debugPrint('[Sync] bootstrap: start');
 
-    // Order matters: push pending orders FIRST so the BE has already
-    // decremented stock. Then pulling products refills local with the
-    // post-decrement values, avoiding a double-decrement window.
-    snap = await _runPushOrders(snap, emit);
-    snap = await _runPullProducts(snap, emit);
-    snap = await _runPullCategories(snap, emit);
-    snap = await _runPullPromos(snap, emit);
-
-    snap = snap.copyWith(inProgress: null);
-    _emit(emit, snap);
+    try {
+      snap = await _runPushOrders(snap, emit);
+      snap = await _runPullProducts(snap, emit);
+      snap = await _runPullCategories(snap, emit);
+      snap = await _runPullPromos(snap, emit);
+    } catch (e, st) {
+      if (kDebugMode) debugPrint('[Sync] bootstrap error: $e\n$st');
+      snap = snap.copyWith(
+        errors: _with(snap.errors, 'bootstrap', _shorten('$e')),
+      );
+    } finally {
+      snap = snap.copyWith(inProgress: null);
+      _emit(emit, snap);
+    }
 
     if (kDebugMode) {
       debugPrint(
