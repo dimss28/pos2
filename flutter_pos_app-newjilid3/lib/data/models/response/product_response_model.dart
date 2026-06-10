@@ -76,7 +76,11 @@ class Product {
         description: json["description"] ?? '',
         price: json["price"] ?? 0,
         stock: json["stock"] ?? 0,
-        category: json["category"] is String ? json["category"] : '',
+        category: json['category'] is String
+            ? json['category'] as String
+            : (json['category'] is Map
+                ? (json['category']['name'] as String?) ?? ''
+                : (json['category_label'] as String?) ?? ''),
         categoryId: json["category_id"] is String
             ? (int.tryParse(json["category_id"]) ?? 0)
             : (json["category_id"] ?? 0),

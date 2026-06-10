@@ -9,7 +9,7 @@ class Variables {
   static const String baseUrl = String.fromEnvironment(
     'BASE_URL',
     // defaultValue: 'https://api.example.com',
-    defaultValue: 'http://192.168.18.202:8000',
+    defaultValue: 'https://pos.absensiku.com',
     // defaultValue: 'http://192.168.1.103:8000',
   );
 

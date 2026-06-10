@@ -88,6 +88,9 @@ class CashSessionRemoteDatasource {
     try {
       final r = await _http.get(_u('cash-sessions/current'),
           headers: await _headers());
+      if (r.statusCode == 404) {
+        return right(null);
+      }
       return _unwrap(r).fold(
         left,
         (data) => right(data == null

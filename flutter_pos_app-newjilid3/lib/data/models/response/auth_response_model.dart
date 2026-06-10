@@ -14,11 +14,15 @@ class AuthResponseModel {
 
   String toJson() => json.encode(toMap());
 
-  factory AuthResponseModel.fromMap(Map<String, dynamic> json) =>
-      AuthResponseModel(
-        user: User.fromMap(json["user"]),
-        token: json["token"],
-      );
+  factory AuthResponseModel.fromMap(Map<String, dynamic> json) {
+    final data = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : json;
+    return AuthResponseModel(
+      user: User.fromMap(data['user'] as Map<String, dynamic>),
+      token: data['token'] as String,
+    );
+  }
 
   Map<String, dynamic> toMap() => {
         "user": user.toMap(),
