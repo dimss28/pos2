@@ -1,6 +1,6 @@
 part of 'history_bloc.dart';
 
-enum HistoryDateRange { today, week, month, custom }
+enum HistoryDateRange { all, today, week, month, custom }
 
 @freezed
 sealed class HistoryEvent with _$HistoryEvent {

@@ -68,8 +68,8 @@
                             <td><input type="checkbox" name="ids[]" form="bulk-form" value="{{ $p->id }}" class="form-check-input row-select"></td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    @if ($p->image)
-                                        <img src="{{ asset('storage/products/'.$p->image) }}" class="rounded me-2" style="width:48px;height:48px;object-fit:cover">
+                                    @if ($p->image_url)
+                                        <img src="{{ $p->image_url }}" class="rounded me-2" style="width:48px;height:48px;object-fit:cover">
                                     @else
                                         <div class="rounded bg-light me-2 d-flex align-items-center justify-content-center" style="width:48px;height:48px"><i class="fas fa-image text-muted"></i></div>
                                     @endif

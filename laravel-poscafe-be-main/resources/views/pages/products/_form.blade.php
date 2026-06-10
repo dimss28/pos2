@@ -28,7 +28,7 @@
                 <h5 class="fw-bold mb-3">{{ __('Foto Produk') }}</h5>
                 <div class="mb-2 text-center">
                     <img id="preview"
-                         src="{{ $product->image ? asset('storage/products/'.$product->image) : 'https://placehold.co/300x200?text=Foto' }}"
+                         src="{{ $product->image_url ?? 'https://placehold.co/300x200?text=Foto' }}"
                          class="img-fluid rounded" style="max-height:200px;object-fit:cover">
                 </div>
                 <input type="file" name="image" id="imageInput" accept="image/*"

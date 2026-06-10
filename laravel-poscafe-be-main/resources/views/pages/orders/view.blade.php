@@ -35,8 +35,8 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @if ($it->product?->image)
-                                            <img src="{{ asset('storage/products/'.$it->product->image) }}" class="rounded me-2" style="width:40px;height:40px;object-fit:cover">
+                                        @if ($it->product?->image_url)
+                                            <img src="{{ $it->product->image_url }}" class="rounded me-2" style="width:40px;height:40px;object-fit:cover">
                                         @endif
                                         <div>
                                             <div class="fw-semibold">{{ $it->product?->name ?? '[deleted]' }}</div>

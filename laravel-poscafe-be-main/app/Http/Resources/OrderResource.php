@@ -13,6 +13,7 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'order_number' => $this->order_number,
             'transaction_time' => $this->transaction_time?->toIso8601String(),
+            'kasir_id' => $this->kasir_id,
             'kasir' => new UserResource($this->whenLoaded('kasir')),
             'cash_session_id' => $this->cash_session_id,
             'promo_id' => $this->promo_id,

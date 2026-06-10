@@ -12,7 +12,7 @@ class PromoController extends Controller
 {
     public function index()
     {
-        $promos = Promo::live()->orderBy('name')->get();
+        $promos = Promo::query()->orderBy('name')->get();
 
         return ApiResponse::success(PromoResource::collection($promos));
     }

@@ -49,19 +49,31 @@ class OrderRequestModel {
             json['order_items'].map((x) => OrderItemModel.fromMap(x))),
       );
 
-  Map<String, dynamic> toMap() => {
-        if (clientUuid != null) 'client_uuid': clientUuid,
-        'transaction_time': transactionTime,
-        'kasir_id': kasirId,
-        'total_price': totalPrice,
-        'total_item': totalItem,
-        'payment_method': paymentMethod,
-        if (promoId != null) 'promo_id': promoId,
-        'discount_amount': discountAmount,
-        if (cashSessionId != null) 'cash_session_id': cashSessionId,
-        if (amountPaid != null) 'amount_paid': amountPaid,
-        'order_items': List<dynamic>.from(orderItems.map((x) => x.toMap())),
-      };
+  /// Payload shape for `POST /api/orders` (Laravel [ApiOrderStoreRequest]).
+  Map<String, dynamic> toMap() {
+    final itemsSubtotal = orderItems.fold<int>(
+      0,
+      (sum, item) => sum + item.totalPrice,
+    );
+    final tax = (totalPrice - itemsSubtotal).clamp(0, 1 << 31);
+
+    return {
+      'items': orderItems.map((x) => x.toMap()).toList(),
+      'subtotal': itemsSubtotal,
+      if (tax > 0) 'tax': tax,
+      'amount_paid': amountPaid ?? totalPrice,
+      'payment_method': _normalizePaymentMethod(paymentMethod),
+      if (promoId != null) 'promo_id': promoId,
+      if (transactionTime.isNotEmpty) 'transaction_time': transactionTime,
+    };
+  }
+
+  static String _normalizePaymentMethod(String raw) {
+    final v = raw.toLowerCase();
+    if (v.contains('qris')) return 'qris';
+    if (v.contains('transfer')) return 'transfer';
+    return 'cash';
+  }
 }
 
 class OrderItemModel {

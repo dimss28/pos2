@@ -141,6 +141,7 @@ class _FilterChipsRow extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           children: [
             for (final entry in const [
+              (HistoryDateRange.all, 'Semua'),
               (HistoryDateRange.today, 'Hari Ini'),
               (HistoryDateRange.week, 'Minggu Ini'),
               (HistoryDateRange.month, 'Bulan Ini'),
@@ -178,6 +179,7 @@ class _SummaryCard extends StatelessWidget {
   const _SummaryCard({required this.filtered, required this.range});
 
   String get _label => switch (range) {
+        HistoryDateRange.all => 'Total pendapatan',
         HistoryDateRange.today => 'Pendapatan hari ini',
         HistoryDateRange.week => 'Pendapatan minggu ini',
         HistoryDateRange.month => 'Pendapatan bulan ini',

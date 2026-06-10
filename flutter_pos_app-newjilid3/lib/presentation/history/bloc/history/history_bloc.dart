@@ -30,7 +30,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
       final merged = await _loadMerged();
       final filtered = applyFilter(
         merged,
-        HistoryDateRange.today,
+        HistoryDateRange.all,
         null,
         null,
       );
@@ -124,6 +124,8 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> {
     DateTime? start;
     DateTime? end;
     switch (range) {
+      case HistoryDateRange.all:
+        return orders;
       case HistoryDateRange.today:
         start = DateTime(n.year, n.month, n.day);
         end = start.add(const Duration(days: 1));

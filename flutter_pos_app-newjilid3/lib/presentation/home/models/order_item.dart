@@ -33,10 +33,12 @@ class OrderItem {
   }
 
   static OrderItemModel fromMapLocal(Map<String, dynamic> map) {
+    final unitPrice = (map['price'] as num?)?.toInt() ?? 0;
+    final qty = (map['quantity'] as num?)?.toInt() ?? 0;
     return OrderItemModel(
-      productId: map['id_product']?.toInt() ?? 0,
-      quantity: map['quantity']?.toInt() ?? 0,
-      totalPrice: map['price']?.toInt() ?? 0 * (map['quantity']?.toInt() ?? 0),
+      productId: (map['id_product'] as num?)?.toInt() ?? 0,
+      quantity: qty,
+      totalPrice: unitPrice * qty,
     );
   }
 

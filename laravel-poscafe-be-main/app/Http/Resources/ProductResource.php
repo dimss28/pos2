@@ -21,7 +21,7 @@ class ProductResource extends JsonResource
             ),
             'category_label' => $this->category,
             'category_id' => $this->category_id,
-            'image' => $this->image ? asset('storage/products/'.$this->image) : null,
+            'image' => $this->image_url,
             'is_best_seller' => (bool) $this->is_best_seller,
         ];
     }
