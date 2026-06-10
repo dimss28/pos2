@@ -13,6 +13,7 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../data/datasources/auth_local_datasource.dart';
 import '../../../data/datasources/payment_settings_remote_datasource.dart';
+import '../../../data/datasources/table_order_remote_datasource.dart';
 import '../../../data/models/response/auth_response_model.dart';
 import '../../auth/bloc/delete_account/delete_account_bloc.dart';
 import '../../auth/pages/login_page.dart';
@@ -47,6 +48,7 @@ class _SettingPageState extends State<SettingPage> {
   AuthResponseModel? _auth;
   bool _printerPaired = false;
   bool _qrisActive = false;
+  int _tableOrderCount = 0;
 
   @override
   void initState() {
@@ -59,11 +61,13 @@ class _SettingPageState extends State<SettingPage> {
     final auth = await ds.getAuthData();
     final printer = await ds.getPrinter();
     final payment = await PaymentSettingsRemoteDatasource().fetch();
+    final tableOrders = await TableOrderRemoteDatasource().pendingCount();
     if (!mounted) return;
     setState(() {
       _auth = auth;
       _printerPaired = printer.isNotEmpty;
       _qrisActive = payment.qrisAvailable;
+      _tableOrderCount = tableOrders;
     });
   }
 
@@ -172,8 +176,22 @@ class _SettingPageState extends State<SettingPage> {
       _Tile(
         icon: Icons.restaurant_menu,
         label: 'Pesanan Meja',
-        subtitle: 'Order dari scan QR pelanggan',
-        onTap: () => context.push(const TableOrdersPage()),
+        subtitle: _tableOrderCount > 0
+            ? '$_tableOrderCount pesanan menunggu diproses'
+            : 'Order dari scan QR pelanggan',
+        trailing: _tableOrderCount > 0
+            ? AppStatusPill(
+                label: '$_tableOrderCount',
+                kind: AppStatusKind.warning,
+              )
+            : null,
+        onTap: () async {
+          await context.push(const TableOrdersPage());
+          if (!mounted) return;
+          final count = await TableOrderRemoteDatasource().pendingCount();
+          if (!mounted) return;
+          setState(() => _tableOrderCount = count);
+        },
       ),
       BlocBuilder<CashSessionBloc, CashSessionState>(
         builder: (context, shiftState) {

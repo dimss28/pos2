@@ -22,18 +22,37 @@ class TableOrderController extends Controller
             $query->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED]);
         }
 
-        return OrderResource::collection(
-            $query->latest('transaction_time')->paginate(30)
-        );
+        $paginator = $query->latest('transaction_time')->paginate(30);
+
+        $items = collect($paginator->items())
+            ->map(fn (Order $order) => (new OrderResource($order))->resolve())
+            ->values()
+            ->all();
+
+        return ApiResponse::success($items, 'OK', 200, [
+            'total' => $paginator->total(),
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+        ]);
+    }
+
+    public function pendingCount()
+    {
+        $count = Order::query()
+            ->where('order_source', Order::SOURCE_TABLE_QR)
+            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+            ->count();
+
+        return ApiResponse::success(['count' => $count]);
     }
 
     public function show(Order $order)
     {
         abort_unless($order->isTableOrder(), 404);
 
-        return ApiResponse::success(
-            new OrderResource($order->load(['diningTable', 'orderItems.product', 'confirmedBy']))
-        );
+        $order->load(['diningTable', 'orderItems.product', 'confirmedBy']);
+
+        return ApiResponse::success((new OrderResource($order))->resolve());
     }
 
     public function confirm(Request $request, Order $order)

@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Table orders (guest QR flow — kasir/admin inbox)
     Route::prefix('table-orders')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\TableOrderController::class, 'index']);
+        Route::get('pending-count', [\App\Http\Controllers\Api\TableOrderController::class, 'pendingCount']);
         Route::get('{order}', [\App\Http\Controllers\Api\TableOrderController::class, 'show'])->whereNumber('order');
         Route::post('{order}/confirm', [\App\Http\Controllers\Api\TableOrderController::class, 'confirm'])->whereNumber('order');
         Route::post('{order}/reject', [\App\Http\Controllers\Api\TableOrderController::class, 'reject'])->whereNumber('order');
