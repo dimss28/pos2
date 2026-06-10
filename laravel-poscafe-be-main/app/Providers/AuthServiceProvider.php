@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Models\CashSession;
 use App\Models\Category;
+use App\Models\DiningTable;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Promo;
 use App\Models\User;
 use App\Policies\CashSessionPolicy;
 use App\Policies\CategoryPolicy;
+use App\Policies\DiningTablePolicy;
 use App\Policies\OrderPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\PromoPolicy;
@@ -27,6 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(CashSession::class, CashSessionPolicy::class);
         Gate::policy(Promo::class, PromoPolicy::class);
+        Gate::policy(DiningTable::class, DiningTablePolicy::class);
 
         Gate::define('view-reports', fn (User $user) => $user->isAdmin());
     }

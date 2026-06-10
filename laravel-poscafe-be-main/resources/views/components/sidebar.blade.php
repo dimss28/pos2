@@ -37,8 +37,22 @@
                 </li>
             @endif
         @endcan
+        @can('viewAny', App\Models\DiningTable::class)
+            @if ($hasRoute('dining-table.index'))
+                <li class="{{ request()->routeIs('dining-table.*') ? 'active' : '' }}">
+                    <a href="{{ route('dining-table.index') }}"><i class="fas fa-chair"></i><span>{{ __('Meja') }}</span></a>
+                </li>
+            @endif
+        @endcan
+        @if (auth()->user()?->isAdmin())
+            @if ($hasRoute('store-settings.edit'))
+                <li class="{{ request()->routeIs('store-settings.*') ? 'active' : '' }}">
+                    <a href="{{ route('store-settings.edit') }}"><i class="fas fa-store"></i><span>{{ __('Pengaturan Toko') }}</span></a>
+                </li>
+            @endif
+        @endif
 
-        @if ($hasRoute('order.index') || $hasRoute('cash-session.index'))
+        @if ($hasRoute('order.index') || $hasRoute('cash-session.index') || $hasRoute('table-order.index'))
             <li class="menu-header">{{ __('Transaksi') }}</li>
         @endif
         @if ($hasRoute('order.index'))
@@ -49,6 +63,11 @@
         @if ($hasRoute('cash-session.index'))
             <li class="{{ request()->routeIs('cash-session.*') ? 'active' : '' }}">
                 <a href="{{ route('cash-session.index') }}"><i class="fas fa-cash-register"></i><span>{{ __('Cash Session') }}</span></a>
+            </li>
+        @endif
+        @if ($hasRoute('table-order.index'))
+            <li class="{{ request()->routeIs('table-order.*') ? 'active' : '' }}">
+                <a href="{{ route('table-order.index') }}"><i class="fas fa-concierge-bell"></i><span>{{ __('Pesanan Meja') }}</span></a>
             </li>
         @endif
 

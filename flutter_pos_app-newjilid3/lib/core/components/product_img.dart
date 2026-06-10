@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_typography.dart';
 
@@ -34,7 +33,6 @@ class ProductImg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = context.palette;
     final initial = name.isEmpty ? '?' : name.characters.first.toUpperCase();
 
     Widget buildFallback(double tileSize) => Container(

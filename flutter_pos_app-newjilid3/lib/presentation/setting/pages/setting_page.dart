@@ -23,6 +23,7 @@ import '../bloc/sync/sync_bloc.dart';
 import 'manage_printer_page.dart';
 import 'receipt_settings_page.dart';
 import 'admin_shift_page.dart';
+import 'table_orders_page.dart';
 import 'manage_category_page.dart';
 import 'manage_product_page.dart';
 import 'manage_user_page.dart';
@@ -128,9 +129,79 @@ class _SettingPageState extends State<SettingPage> {
     return '${diff.inDays} hari lalu';
   }
 
+  List<Widget> _productTiles(bool isAdmin) {
+    return [
+      _Tile(
+        icon: Icons.inventory_2_outlined,
+        label: 'Kelola Produk',
+        subtitle: 'Tambah, edit, hapus menu',
+        onTap: () => context.push(const ManageProductPage()),
+      ),
+      if (isAdmin) ...[
+        _Tile(
+          icon: Icons.category_outlined,
+          label: 'Kelola Kategori',
+          subtitle: 'Atur kategori menu',
+          onTap: () => context.push(const ManageCategoryPage()),
+        ),
+        _Tile(
+          icon: Icons.group_outlined,
+          label: 'Kelola Karyawan',
+          subtitle: 'Tambah / ubah akun kasir, admin',
+          onTap: () => context.push(const ManageUserPage()),
+        ),
+        _Tile(
+          icon: Icons.lock_clock_outlined,
+          label: 'Kelola Shift',
+          subtitle: 'Force-close shift kasir yang lupa tutup',
+          onTap: () => context.push(const AdminShiftPage()),
+        ),
+        _Tile(
+          icon: Icons.local_offer_outlined,
+          label: 'Promo & Voucher',
+          subtitle: 'Diskon otomatis dan kode voucher',
+          onTap: () => context.push(const ManagePromoPage()),
+        ),
+        _Tile(
+          icon: Icons.insights_outlined,
+          label: 'Laporan Penjualan',
+          subtitle: 'Ringkasan + export PDF',
+          onTap: () => context.push(const ReportPage()),
+        ),
+      ],
+      _Tile(
+        icon: Icons.restaurant_menu,
+        label: 'Pesanan Meja',
+        subtitle: 'Order dari scan QR pelanggan',
+        onTap: () => context.push(const TableOrdersPage()),
+      ),
+      BlocBuilder<CashSessionBloc, CashSessionState>(
+        builder: (context, shiftState) {
+          final hasOpen = shiftState.maybeWhen(
+            open: (_) => true,
+            orElse: () => false,
+          );
+          return _Tile(
+            icon: Icons.lock_clock,
+            label: 'Tutup Kasir',
+            subtitle:
+                hasOpen ? 'Akhiri shift & hitung kas' : 'Tidak ada shift aktif',
+            trailing: hasOpen
+                ? null
+                : const AppStatusPill(
+                    label: 'TIDAK AKTIF',
+                    kind: AppStatusKind.neutral),
+            onTap: hasOpen ? () => context.push(const TutupKasirPage()) : null,
+          );
+        },
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    final isAdmin = _auth?.user.isAdmin ?? false;
     return Scaffold(
       backgroundColor: p.surface,
       appBar: const AppAppBar(
@@ -142,67 +213,7 @@ class _SettingPageState extends State<SettingPage> {
         children: [
           _ProfileCard(auth: _auth),
           const AppSectionLabel('Produk & Penjualan'),
-          AppListGroup(children: [
-            _Tile(
-              icon: Icons.inventory_2_outlined,
-              label: 'Kelola Produk',
-              subtitle: 'Tambah, edit, hapus menu',
-              onTap: () => context.push(const ManageProductPage()),
-            ),
-            _Tile(
-              icon: Icons.category_outlined,
-              label: 'Kelola Kategori',
-              subtitle: 'Atur kategori menu (admin/owner)',
-              onTap: () => context.push(const ManageCategoryPage()),
-            ),
-            _Tile(
-              icon: Icons.group_outlined,
-              label: 'Kelola Karyawan',
-              subtitle: 'Tambah / ubah akun kasir, admin (owner)',
-              onTap: () => context.push(const ManageUserPage()),
-            ),
-            _Tile(
-              icon: Icons.lock_clock_outlined,
-              label: 'Kelola Shift',
-              subtitle: 'Force-close shift kasir yang lupa tutup (admin)',
-              onTap: () => context.push(const AdminShiftPage()),
-            ),
-            _Tile(
-              icon: Icons.local_offer_outlined,
-              label: 'Promo & Voucher',
-              subtitle: 'Diskon otomatis dan kode voucher',
-              onTap: () => context.push(const ManagePromoPage()),
-            ),
-            _Tile(
-              icon: Icons.insights_outlined,
-              label: 'Laporan Penjualan',
-              subtitle: 'Ringkasan + export PDF',
-              onTap: () => context.push(const ReportPage()),
-            ),
-            BlocBuilder<CashSessionBloc, CashSessionState>(
-              builder: (context, shiftState) {
-                final hasOpen = shiftState.maybeWhen(
-                  open: (_) => true,
-                  orElse: () => false,
-                );
-                return _Tile(
-                  icon: Icons.lock_clock,
-                  label: 'Tutup Kasir',
-                  subtitle: hasOpen
-                      ? 'Akhiri shift & hitung kas'
-                      : 'Tidak ada shift aktif',
-                  trailing: hasOpen
-                      ? null
-                      : const AppStatusPill(
-                          label: 'TIDAK AKTIF',
-                          kind: AppStatusKind.neutral),
-                  onTap: hasOpen
-                      ? () => context.push(const TutupKasirPage())
-                      : null,
-                );
-              },
-            ),
-          ]),
+          AppListGroup(children: _productTiles(isAdmin)),
           const AppSectionLabel('Perangkat & Pembayaran'),
           AppListGroup(children: [
             _Tile(
@@ -370,6 +381,7 @@ class _ProfileCard extends StatelessWidget {
     final p = context.palette;
     final name = auth?.user.name ?? 'Memuat...';
     final email = auth?.user.email ?? '';
+    final role = auth?.user.roleLabel ?? '';
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Container(
@@ -396,6 +408,15 @@ class _ProfileCard extends StatelessWidget {
                   Text(email,
                       style: AppTypography.bodyS
                           .copyWith(color: p.onSurfaceVar)),
+                  if (role.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(role,
+                        style: AppTypography.bodyS.copyWith(
+                          color: p.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        )),
+                  ],
                 ],
               ),
             ),

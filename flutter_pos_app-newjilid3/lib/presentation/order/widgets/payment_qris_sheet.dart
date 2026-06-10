@@ -222,6 +222,17 @@ class _BodyState extends State<_Body> {
                           ),
                         );
                       },
+                      error: (msg) => SizedBox(
+                        width: 220,
+                        height: 220,
+                        child: Center(
+                          child: Text(
+                            msg,
+                            textAlign: TextAlign.center,
+                            style: AppTypography.bodyS.copyWith(color: p.error),
+                          ),
+                        ),
+                      ),
                       orElse: () => const SizedBox(
                         width: 220,
                         height: 220,

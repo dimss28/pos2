@@ -17,20 +17,26 @@ class QrisBloc extends Bloc<QrisEvent, QrisState> {
   ) : super(const _Initial()) {
     on<_GenerateQRCode>((event, emit) async {
       emit(const QrisState.loading());
-      final response = await midtransRemoteDatasource.generateQRCode(
-          event.orderId, event.grossAmount);
-
-      emit(QrisState.qrisResponse(response));
+      try {
+        final response = await midtransRemoteDatasource.generateQRCode(
+            event.orderId, event.grossAmount);
+        emit(QrisState.qrisResponse(response));
+      } catch (e) {
+        emit(QrisState.error(
+            'Gagal membuat QR: ${e.toString().replaceFirst('Exception: ', '')}'));
+      }
     });
 
     on<_CheckPaymentStatus>((event, emit) async {
-      // emit(const QrisState.loading());
-      final response =
-          await midtransRemoteDatasource.checkPaymentStatus(event.orderId);
-
-      // emit(QrisState.statusCheck(response));
-      if (response.transactionStatus == 'settlement') {
-        emit(const QrisState.success('Pembayaran Berhasil'));
+      try {
+        final response =
+            await midtransRemoteDatasource.checkPaymentStatus(event.orderId);
+        if (response.transactionStatus == 'settlement') {
+          emit(const QrisState.success('Pembayaran Berhasil'));
+        }
+      } catch (e) {
+        emit(QrisState.error(
+            'Gagal cek status: ${e.toString().replaceFirst('Exception: ', '')}'));
       }
     });
   }

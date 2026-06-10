@@ -49,6 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('{id}/close', [CashSessionController::class, 'close'])->whereNumber('id');
     });
 
+    // Table orders (guest QR flow — kasir/admin inbox)
+    Route::prefix('table-orders')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\TableOrderController::class, 'index']);
+        Route::get('{order}', [\App\Http\Controllers\Api\TableOrderController::class, 'show'])->whereNumber('order');
+        Route::post('{order}/confirm', [\App\Http\Controllers\Api\TableOrderController::class, 'confirm'])->whereNumber('order');
+        Route::post('{order}/reject', [\App\Http\Controllers\Api\TableOrderController::class, 'reject'])->whereNumber('order');
+        Route::post('{order}/status', [\App\Http\Controllers\Api\TableOrderController::class, 'updateStatus'])->whereNumber('order');
+    });
+
     // Promos
     Route::prefix('promos')->group(function () {
         Route::get('/', [PromoController::class, 'index']);

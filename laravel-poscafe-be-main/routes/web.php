@@ -10,6 +10,11 @@ Route::get('/', function () {
     return view('pages.auth.login');
 });
 
+Route::get('m/{token}', [\App\Http\Controllers\GuestOrderController::class, 'show'])->name('guest.order');
+Route::post('m/{token}/checkout', [\App\Http\Controllers\GuestOrderController::class, 'checkout'])->name('guest.checkout');
+Route::get('m/{token}/orders/{order}/status', [\App\Http\Controllers\GuestOrderController::class, 'paymentStatus'])
+    ->name('guest.order.status');
+
 Route::middleware(['auth', 'cache.headers:no_store;no_cache;must_revalidate;max_age=0'])->group(function () {
     Route::get('home', [\App\Http\Controllers\DashboardController::class, 'index'])->name('home');
     Route::get('showcase', fn () => view('pages._component-showcase'))->name('showcase');
@@ -23,6 +28,23 @@ Route::middleware(['auth', 'cache.headers:no_store;no_cache;must_revalidate;max_
 
     Route::post('promo/{promo}/toggle', [\App\Http\Controllers\PromoController::class, 'toggle'])->name('promo.toggle');
     Route::resource('promo', \App\Http\Controllers\PromoController::class)->except(['show']);
+
+    Route::get('dining-table/qr-download-all', [\App\Http\Controllers\DiningTableController::class, 'downloadAllQr'])
+        ->name('dining-table.qr-all');
+    Route::post('dining-table/{dining_table}/regenerate-token', [\App\Http\Controllers\DiningTableController::class, 'regenerateToken'])
+        ->name('dining-table.regenerate');
+    Route::get('dining-table/{dining_table}/qr', [\App\Http\Controllers\DiningTableController::class, 'downloadQr'])
+        ->name('dining-table.qr');
+    Route::resource('dining-table', \App\Http\Controllers\DiningTableController::class)->except(['show']);
+
+    Route::get('store-settings', [\App\Http\Controllers\StoreSettingController::class, 'edit'])->name('store-settings.edit');
+    Route::put('store-settings', [\App\Http\Controllers\StoreSettingController::class, 'update'])->name('store-settings.update');
+
+    Route::get('table-orders', [\App\Http\Controllers\TableOrderController::class, 'index'])->name('table-order.index');
+    Route::get('table-orders/{order}', [\App\Http\Controllers\TableOrderController::class, 'show'])->name('table-order.show');
+    Route::post('table-orders/{order}/confirm', [\App\Http\Controllers\TableOrderController::class, 'confirm'])->name('table-order.confirm');
+    Route::post('table-orders/{order}/reject', [\App\Http\Controllers\TableOrderController::class, 'reject'])->name('table-order.reject');
+    Route::post('table-orders/{order}/status', [\App\Http\Controllers\TableOrderController::class, 'updateStatus'])->name('table-order.status');
 
     Route::get('order/export', [\App\Http\Controllers\OrderController::class, 'export'])->name('order.export');
     Route::get('order/{order}/receipt', [\App\Http\Controllers\OrderController::class, 'receipt'])->name('order.receipt');

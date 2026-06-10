@@ -76,4 +76,25 @@ class User {
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
       };
+
+  String get _role => roles.toLowerCase();
+
+  bool get isOwner => _role == 'owner';
+
+  bool get isAdmin => isOwner || _role == 'admin';
+
+  bool get isKasir => _role == 'kasir';
+
+  String get roleLabel {
+    switch (roles) {
+      case 'owner':
+        return 'Pemilik';
+      case 'admin':
+        return 'Admin';
+      case 'kasir':
+        return 'Kasir';
+      default:
+        return roles;
+    }
+  }
 }
