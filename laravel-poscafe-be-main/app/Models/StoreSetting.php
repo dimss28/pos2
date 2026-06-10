@@ -39,4 +39,13 @@ class StoreSetting extends Model
 
         return $t['bank_name'] !== '' && $t['account_number'] !== '' && $t['account_holder'] !== '';
     }
+
+    public static function isQrisEnabled(): bool
+    {
+        if (self::get('midtrans_enabled', '0') !== '1') {
+            return false;
+        }
+
+        return app(\App\Services\MidtransService::class)->isConfigured();
+    }
 }

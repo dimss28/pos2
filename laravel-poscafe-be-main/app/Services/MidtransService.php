@@ -77,6 +77,14 @@ class MidtransService
 
     public function transactionStatus(string $orderId): ?string
     {
+        return $this->transactionStatusBody($orderId)['transaction_status'] ?? null;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function transactionStatusBody(string $orderId): ?array
+    {
         $key = $this->serverKey();
         if ($key === '') {
             return null;
@@ -90,6 +98,6 @@ class MidtransService
             return null;
         }
 
-        return $response->json('transaction_status');
+        return $response->json();
     }
 }

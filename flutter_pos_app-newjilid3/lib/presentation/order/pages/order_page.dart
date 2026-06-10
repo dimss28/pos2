@@ -21,6 +21,7 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../data/datasources/auth_local_datasource.dart';
+import '../../../data/datasources/payment_settings_remote_datasource.dart';
 import '../../../data/models/response/product_response_model.dart';
 import '../../cash_session/bloc/cash_session/cash_session_bloc.dart';
 import '../../home/bloc/checkout/checkout_bloc.dart';
@@ -93,15 +94,13 @@ class OrderPageState extends State<OrderPage> with WidgetsBindingObserver {
   }
 
   Future<void> refreshQrisAvailability() async {
-    final auth = AuthLocalDatasource();
-    final enabled = await auth.isMidtransEnabled();
-    final key = await auth.getMitransServerKey();
+    final payment = await PaymentSettingsRemoteDatasource().fetch();
     dev.log(
-      'QRIS check: enabled=$enabled, keyLength=${key.length}, key=${key.isNotEmpty ? "${key.substring(0, 4)}..." : "(empty)"}',
+      'QRIS check: server enabled=${payment.qrisEnabled} configured=${payment.midtransConfigured}',
       name: 'OrderPage',
     );
     if (!mounted) return;
-    final available = enabled && key.isNotEmpty;
+    final available = payment.qrisAvailable;
     dev.log('QRIS available=$available', name: 'OrderPage');
     setState(() {
       _qrisAvailable = available;

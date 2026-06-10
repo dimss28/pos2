@@ -12,6 +12,7 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../data/datasources/auth_local_datasource.dart';
+import '../../../data/datasources/payment_settings_remote_datasource.dart';
 import '../../../data/models/response/auth_response_model.dart';
 import '../../auth/bloc/delete_account/delete_account_bloc.dart';
 import '../../auth/pages/login_page.dart';
@@ -57,13 +58,12 @@ class _SettingPageState extends State<SettingPage> {
     final ds = AuthLocalDatasource();
     final auth = await ds.getAuthData();
     final printer = await ds.getPrinter();
-    final qrisKey = await ds.getMitransServerKey();
-    final qrisOn = await ds.isMidtransEnabled();
+    final payment = await PaymentSettingsRemoteDatasource().fetch();
     if (!mounted) return;
     setState(() {
       _auth = auth;
       _printerPaired = printer.isNotEmpty;
-      _qrisActive = qrisKey.isNotEmpty && qrisOn;
+      _qrisActive = payment.qrisAvailable;
     });
   }
 

@@ -2,7 +2,7 @@
 @section('title', 'Pengaturan Toko')
 @section('page-title', 'Pengaturan Toko')
 @section('main')
-<x-page-header title="Pengaturan Toko" subtitle="Rekening transfer & QRIS pelanggan (meja)" />
+<x-page-header title="Pengaturan Toko" subtitle="Rekening transfer & QRIS (kasir + pelanggan meja)" />
 
 <form method="POST" action="{{ route('store-settings.update') }}" class="card-clean">
     @csrf @method('PUT')
@@ -23,8 +23,14 @@
     </div>
 
     <hr class="my-4">
-    <h6 class="fw-bold mb-3">QRIS Pelanggan (Midtrans)</h6>
-    <p class="small text-muted">Server key untuk pembayaran QRIS dari web meja. Bisa sandbox (SB-Mid-server-...) untuk testing.</p>
+    <h6 class="fw-bold mb-3">QRIS (Midtrans) — Kasir & Pelanggan Meja</h6>
+    <p class="small text-muted">Satu pengaturan untuk app kasir dan order scan meja. Sandbox key diawali <code>SB-Mid-server-</code>.</p>
+    <div class="mb-3">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="midtrans_enabled" value="1" id="qris_on" @checked(old('midtrans_enabled', $midtrans_enabled))>
+            <label class="form-check-label" for="qris_on"><strong>Aktifkan QRIS</strong> (kasir + pelanggan)</label>
+        </div>
+    </div>
     <div class="row g-3">
         <div class="col-md-8">
             <label class="form-label">Server Key</label>

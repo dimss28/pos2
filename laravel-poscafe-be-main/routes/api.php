@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('settings/payment', [\App\Http\Controllers\Api\PaymentSettingsController::class, 'show']);
+    Route::post('payments/qris/charge', [\App\Http\Controllers\Api\QrisPaymentController::class, 'charge']);
+    Route::get('payments/qris/{orderId}/status', [\App\Http\Controllers\Api\QrisPaymentController::class, 'status']);
+
     // Auth
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);

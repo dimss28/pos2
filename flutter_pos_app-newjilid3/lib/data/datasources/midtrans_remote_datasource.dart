@@ -1,86 +1,83 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 
-import 'package:flutter_pos_app/data/datasources/auth_local_datasource.dart';
+import 'package:flutter_pos_app/core/constants/variables.dart';
 import 'package:flutter_pos_app/data/models/response/qris_response_model.dart';
 import 'package:flutter_pos_app/data/models/response/qris_status_response_model.dart';
 import 'package:http/http.dart' as http;
 
-class MidtransRemoteDatasource {
-  static String _baseUrl(String serverKey) =>
-      serverKey.startsWith('SB-')
-          ? 'https://api.sandbox.midtrans.com'
-          : 'https://api.midtrans.com';
+import '../../core/services/auth_interceptor.dart';
+import 'auth_local_datasource.dart';
 
-  String generateBasicAuthHeader(String serverKey) {
-    final base64Credentials = base64Encode(utf8.encode('$serverKey:'));
-    return 'Basic $base64Credentials';
+/// QRIS via server — Server Key Midtrans hanya disimpan di backend.
+class MidtransRemoteDatasource {
+  Future<Map<String, String>> _headers() async {
+    final auth = await AuthLocalDatasource().getAuthData();
+    return {
+      'Authorization': 'Bearer ${auth.token}',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
   }
 
   Future<QrisResponseModel> generateQRCode(
       String orderId, int grossAmount) async {
-    final serverKey = await AuthLocalDatasource().getMitransServerKey();
-    final baseUrl = _baseUrl(serverKey);
-    final headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': generateBasicAuthHeader(serverKey),
-    };
-
-    final body = jsonEncode({
-      'payment_type': 'gopay',
-      'transaction_details': {
-        'gross_amount': grossAmount,
-        'order_id': orderId,
-      },
-    });
-
-    dev.log('POST $baseUrl/v2/charge orderId=$orderId amount=$grossAmount',
-        name: 'Midtrans');
+    dev.log('POST /api/payments/qris/charge orderId=$orderId amount=$grossAmount',
+        name: 'QrisPayment');
 
     final response = await http.post(
-      Uri.parse('$baseUrl/v2/charge'),
-      headers: headers,
-      body: body,
+      Uri.parse('${Variables.baseUrl}/api/payments/qris/charge'),
+      headers: await _headers(),
+      body: jsonEncode({
+        'order_id': orderId,
+        'gross_amount': grossAmount,
+      }),
     );
 
+    AuthInterceptor.instance.check(response);
     dev.log('charge response ${response.statusCode}: ${response.body}',
-        name: 'Midtrans');
+        name: 'QrisPayment');
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final qris = QrisResponseModel.fromJson(response.body);
-      for (final a in qris.actions ?? []) {
-        dev.log('action: ${a.name} → ${a.url}', name: 'Midtrans');
-      }
-      return qris;
-    } else {
-      throw Exception(
-          'Failed to generate QR Code (${response.statusCode}): ${response.body}');
+    if (response.statusCode != 200) {
+      final msg = _extractMessage(response);
+      throw Exception(msg);
     }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = json['data'] as Map<String, dynamic>? ?? {};
+    final midtrans = data['midtrans'] as Map<String, dynamic>? ?? data;
+    return QrisResponseModel.fromMap(midtrans);
   }
 
   Future<QrisStatusResponseModel> checkPaymentStatus(String orderId) async {
-    final serverKey = await AuthLocalDatasource().getMitransServerKey();
-    final baseUrl = _baseUrl(serverKey);
-    final headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Authorization': generateBasicAuthHeader(serverKey),
-    };
+    dev.log('GET /api/payments/qris/$orderId/status', name: 'QrisPayment');
 
     final response = await http.get(
-      Uri.parse('$baseUrl/v2/$orderId/status'),
-      headers: headers,
+      Uri.parse('${Variables.baseUrl}/api/payments/qris/$orderId/status'),
+      headers: await _headers(),
     );
 
+    AuthInterceptor.instance.check(response);
     dev.log('status response ${response.statusCode}: ${response.body}',
-        name: 'Midtrans');
+        name: 'QrisPayment');
 
-    if (response.statusCode == 200) {
-      return QrisStatusResponseModel.fromJson(response.body);
-    } else {
-      throw Exception(
-          'Failed to check payment status (${response.statusCode}): ${response.body}');
+    if (response.statusCode != 200) {
+      final msg = _extractMessage(response);
+      throw Exception(msg);
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = json['data'] as Map<String, dynamic>? ?? {};
+    return QrisStatusResponseModel.fromMap(data);
+  }
+
+  String _extractMessage(http.Response response) {
+    try {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return (json['message'] as String?) ??
+          'Gagal (${response.statusCode})';
+    } catch (_) {
+      return 'Gagal (${response.statusCode})';
     }
   }
 }

@@ -29,7 +29,7 @@ class GuestOrderController extends Controller
             ->filter(fn ($c) => $c->products->isNotEmpty());
 
         $transfer = StoreSetting::transferBank();
-        $midtransReady = app(MidtransService::class)->isConfigured();
+        $midtransReady = StoreSetting::isQrisEnabled();
 
         return view('guest.order', compact('table', 'categories', 'transfer', 'midtransReady'));
     }
@@ -55,7 +55,7 @@ class GuestOrderController extends Controller
             return response()->json(['message' => 'Rekening transfer belum diatur admin.'], 422);
         }
 
-        if ($data['payment_method'] === 'qris' && ! app(MidtransService::class)->isConfigured()) {
+        if ($data['payment_method'] === 'qris' && ! StoreSetting::isQrisEnabled()) {
             return response()->json(['message' => 'QRIS belum diaktifkan admin.'], 422);
         }
 
