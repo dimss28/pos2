@@ -25,7 +25,7 @@ import '../bloc/sync/sync_bloc.dart';
 import 'manage_printer_page.dart';
 import 'receipt_settings_page.dart';
 import 'admin_shift_page.dart';
-import 'table_orders_page.dart';
+import '../../home/dashboard_scope.dart';
 import 'manage_category_page.dart';
 import 'manage_product_page.dart';
 import 'manage_user_page.dart';
@@ -185,12 +185,8 @@ class _SettingPageState extends State<SettingPage> {
                 kind: AppStatusKind.warning,
               )
             : null,
-        onTap: () async {
-          await context.push(const TableOrdersPage());
-          if (!mounted) return;
-          final count = await TableOrderRemoteDatasource().pendingCount();
-          if (!mounted) return;
-          setState(() => _tableOrderCount = count);
+        onTap: () {
+          DashboardScope.of(context)?.switchTo(DashboardScope.tableOrdersTabIndex);
         },
       ),
       BlocBuilder<CashSessionBloc, CashSessionState>(

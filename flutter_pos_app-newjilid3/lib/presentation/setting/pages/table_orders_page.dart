@@ -13,13 +13,15 @@ import '../../../data/models/response/table_order_model.dart';
 import '../widgets/table_order_detail_sheet.dart';
 
 class TableOrdersPage extends StatefulWidget {
-  const TableOrdersPage({super.key});
+  final VoidCallback? onQueueChanged;
+
+  const TableOrdersPage({super.key, this.onQueueChanged});
 
   @override
-  State<TableOrdersPage> createState() => _TableOrdersPageState();
+  State<TableOrdersPage> createState() => TableOrdersPageState();
 }
 
-class _TableOrdersPageState extends State<TableOrdersPage>
+class TableOrdersPageState extends State<TableOrdersPage>
     with WidgetsBindingObserver {
   final _ds = TableOrderRemoteDatasource();
   List<TableOrderModel>? _items;
@@ -67,7 +69,11 @@ class _TableOrdersPageState extends State<TableOrdersPage>
         _loading = false;
       }),
     );
+    widget.onQueueChanged?.call();
   }
+
+  /// Called when the Meja bottom-nav tab becomes active.
+  void refresh() => _load(silent: true);
 
   Future<void> _reject(TableOrderModel o) async {
     final ok = await AppConfirm.show(
@@ -121,6 +127,7 @@ class _TableOrdersPageState extends State<TableOrdersPage>
       appBar: AppAppBar(
         title: 'Pesanan Meja',
         subtitle: 'Order dari scan QR pelanggan',
+        automaticallyImplyLeading: ModalRoute.of(context)?.canPop ?? false,
         trailing: [
           IconButton(
             icon: const Icon(Icons.refresh),

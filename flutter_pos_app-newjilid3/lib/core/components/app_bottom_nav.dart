@@ -35,12 +35,13 @@ class AppBottomNav extends StatelessWidget {
     required this.items,
   });
 
-  /// Convenience constructor for the standard 4-tab POS shell.
+  /// Convenience constructor for the standard 5-tab POS shell.
   factory AppBottomNav.standard({
     Key? key,
     required int activeIndex,
     required ValueChanged<int> onTap,
     int cartCount = 0,
+    int tableOrderCount = 0,
     int pendingSync = 0,
   }) {
     return AppBottomNav(
@@ -58,6 +59,12 @@ class AppBottomNav extends StatelessWidget {
           activeIcon: Icons.shopping_cart_rounded,
           label: 'Order',
           badge: cartCount,
+        ),
+        AppBottomNavItem(
+          icon: Icons.restaurant_menu_outlined,
+          activeIcon: Icons.restaurant_menu,
+          label: 'Meja',
+          badge: tableOrderCount,
         ),
         const AppBottomNavItem(
           icon: Icons.receipt_long_outlined,
@@ -147,7 +154,7 @@ class _NavCell extends StatelessWidget {
                     active && item.activeIcon != null
                         ? item.activeIcon
                         : item.icon,
-                    size: 22,
+                    size: 20,
                     color: active ? p.onPrimaryContainer : p.onSurface,
                   ),
                 ),
@@ -169,7 +176,7 @@ class _NavCell extends StatelessWidget {
               item.label,
               style: AppTypography.labelM.copyWith(
                 color: active ? p.onSurface : p.onSurfaceVar,
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: active ? FontWeight.w700 : FontWeight.w500,
               ),
             ),

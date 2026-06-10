@@ -27,7 +27,7 @@ import '../../cash_session/bloc/cash_session/cash_session_bloc.dart';
 import '../../home/bloc/checkout/checkout_bloc.dart';
 import '../../home/models/checkout_summary.dart';
 import '../../home/models/order_item.dart';
-import '../../home/pages/dashboard_page.dart';
+import '../../home/dashboard_scope.dart';
 import '../../draft_order/pages/draft_order_page.dart';
 import '../../promo/widgets/discount_sheet.dart';
 import '../bloc/order/order_bloc.dart';
