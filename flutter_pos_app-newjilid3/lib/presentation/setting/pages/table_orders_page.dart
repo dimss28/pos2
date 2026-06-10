@@ -4,6 +4,7 @@ import '../../../core/components/app_app_bar.dart';
 import '../../../core/components/app_button.dart';
 import '../../../core/components/app_empty_state.dart';
 import '../../../core/components/feedback.dart';
+import '../../../core/extensions/build_context_ext.dart';
 import '../../../core/extensions/int_ext.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_typography.dart';
@@ -103,7 +104,7 @@ class _TableOrdersPageState extends State<TableOrdersPage> {
                   : RefreshIndicator(
                       onRefresh: _load,
                       child: ListView.separated(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + context.shellBottomPadding),
                         itemCount: _items!.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (_, i) => _OrderCard(

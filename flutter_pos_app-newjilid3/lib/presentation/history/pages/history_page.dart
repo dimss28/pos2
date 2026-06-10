@@ -6,6 +6,7 @@ import '../../../core/components/app_button.dart';
 import '../../../core/components/app_chip.dart';
 import '../../../core/components/app_empty_state.dart';
 import '../../../core/components/app_icon_button.dart';
+import '../../../core/extensions/build_context_ext.dart';
 import '../../../core/extensions/int_ext.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
@@ -288,7 +289,7 @@ class _OrderList extends StatelessWidget {
     final sortedKeys = groups.keys.toList()..sort((a, b) => b.compareTo(a));
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 16 + context.shellBottomPadding),
       itemCount: sortedKeys.length,
       itemBuilder: (context, i) {
         final day = sortedKeys[i];

@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $table->label }} — {{ config('app.name') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,6 +28,7 @@
             --radius-sm: 8px;
             --radius-md: 12px;
             --shadow: 0 2px 8px rgba(36, 27, 18, .08);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -36,6 +37,7 @@
             background: var(--surface);
             color: var(--on-surface);
             min-height: 100dvh;
+            padding-bottom: var(--safe-bottom);
         }
 
         /* ── header ── */
@@ -132,7 +134,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            padding: 12px 16px 120px;
+            padding: 12px 16px calc(120px + var(--safe-bottom));
             max-width: 520px;
             margin: 0 auto;
         }
@@ -264,7 +266,7 @@
         /* ── floating cart bar ── */
         .cart-bar {
             position: fixed;
-            bottom: 16px;
+            bottom: calc(12px + var(--safe-bottom));
             left: 16px;
             right: 16px;
             max-width: 488px;
@@ -338,7 +340,7 @@
             max-width: 520px;
             margin: 0 auto;
             border-radius: 20px 20px 0 0;
-            padding: 8px 20px 28px;
+            padding: 8px 20px calc(24px + var(--safe-bottom));
             max-height: 92dvh;
             overflow-y: auto;
         }

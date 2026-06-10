@@ -4,6 +4,12 @@ extension BuildContextExt on BuildContext {
   double get deviceHeight => MediaQuery.of(this).size.height;
 
   double get deviceWidth => MediaQuery.of(this).size.width;
+
+  /// Extra bottom space so list/footer buttons stay above shell bottom nav + system bar.
+  double get shellBottomPadding {
+    final mq = MediaQuery.of(this);
+    return mq.padding.bottom + 76;
+  }
 }
 
 extension NavigatorExt on BuildContext {

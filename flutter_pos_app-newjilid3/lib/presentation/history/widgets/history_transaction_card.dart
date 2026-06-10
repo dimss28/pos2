@@ -7,6 +7,7 @@ import '../../../core/extensions/int_ext.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../order/models/order_model.dart';
 import '../pages/transaction_detail_page.dart';
 import 'history_receipt_helper.dart';
 
