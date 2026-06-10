@@ -60,7 +60,7 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($product->image) Storage::disk('public')->delete('products/'.$product->image);
+            $product->deleteStoredImage();
             $data['image'] = basename($request->file('image')->store('products', 'public'));
         }
         $product->update($data);

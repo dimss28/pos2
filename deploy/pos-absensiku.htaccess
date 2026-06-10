@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve uploaded product images directly (LiteSpeed may ignore symlinks).
+    RewriteRule ^storage/(.*)$ /home/absensiku/pos/laravel-poscafe-be-main/storage/app/public/$1 [L]
+
+    # Static assets copied from Laravel public/
+    RewriteCond /home/absensiku/pos/laravel-poscafe-be-main/public/$1 -f
+    RewriteRule ^(css|js|img)/(.*)$ /home/absensiku/pos/laravel-poscafe-be-main/public/$1/$2 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>

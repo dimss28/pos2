@@ -91,9 +91,7 @@ class ProductController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete('products/'.$product->image);
-            }
+            $product->deleteStoredImage();
             $path = $request->file('image')->store('products', 'public');
             $data['image'] = basename($path);
         }
@@ -108,9 +106,7 @@ class ProductController extends Controller
     {
         $this->authorize('delete', $product);
 
-        if ($product->image) {
-            Storage::disk('public')->delete('products/'.$product->image);
-        }
+        $product->deleteStoredImage();
         $product->delete();
 
         return back()->with('success', __('messages.deleted', ['resource' => 'Produk']));
@@ -126,9 +122,7 @@ class ProductController extends Controller
         $products = Product::whereIn('id', $ids)->get();
         foreach ($products as $p) {
             $this->authorize('delete', $p);
-            if ($p->image) {
-                Storage::disk('public')->delete('products/'.$p->image);
-            }
+            $p->deleteStoredImage();
         }
         Product::whereIn('id', $ids)->delete();
 

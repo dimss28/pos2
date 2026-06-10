@@ -27,9 +27,38 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function getImageUrlAttribute(): ?string
+    public static function isBrokenRemoteImage(?string $image): bool
+    {
+        if (! $image) {
+            return false;
+        }
+
+        return str_contains($image, 'via.placeholder.com')
+            || str_contains($image, 'placeholder.com/');
+    }
+
+    public function isLocalImage(): bool
     {
         if (! $this->image) {
+            return false;
+        }
+
+        return ! str_starts_with($this->image, 'http://')
+            && ! str_starts_with($this->image, 'https://');
+    }
+
+    public function deleteStoredImage(): void
+    {
+        if (! $this->isLocalImage()) {
+            return;
+        }
+
+        \Illuminate\Support\Facades\Storage::disk('public')->delete('products/'.$this->image);
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if (! $this->image || self::isBrokenRemoteImage($this->image)) {
             return null;
         }
         if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {

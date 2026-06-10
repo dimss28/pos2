@@ -115,6 +115,10 @@ class Product {
   /// Tolerates legacy local rows that stored just the filename.
   String? get displayImageUrl {
     if (image.isEmpty) return null;
+    if (image.contains('via.placeholder.com') ||
+        image.contains('placeholder.com/')) {
+      return null;
+    }
     if (image.startsWith('http')) return image;
     return '${Variables.imageBaseUrl}$image';
   }

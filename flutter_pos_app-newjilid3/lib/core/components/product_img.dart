@@ -78,15 +78,7 @@ class ProductImg extends StatelessWidget {
             imageUrl: imageUrl!,
             fit: BoxFit.cover,
             placeholder: (_, __) => buildFallback(resolved),
-            errorWidget: (_, __, ___) => Container(
-              color: p.surfaceVariant,
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.image_not_supported_outlined,
-                size: resolved * 0.4,
-                color: p.onSurfaceVar,
-              ),
-            ),
+            errorWidget: (_, __, ___) => buildFallback(resolved),
           ),
         ),
       ),
