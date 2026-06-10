@@ -25,7 +25,7 @@ class Order extends Model
     protected $fillable = [
         'order_number', 'transaction_time', 'total_price', 'total_item', 'kasir_id', 'dining_table_id', 'order_source',
         'cash_session_id', 'promo_id', 'payment_method', 'status', 'subtotal', 'discount', 'discount_amount', 'tax',
-        'amount_paid', 'change_amount', 'customer_name', 'notes', 'payment_proof_path', 'midtrans_order_id',
+        'amount_paid', 'change_amount', 'customer_name', 'customer_whatsapp', 'notes', 'payment_proof_path', 'midtrans_order_id',
         'confirmed_by_user_id', 'confirmed_at', 'refunded_at', 'refund_reason', 'refund_note', 'refund_amount',
         'refunded_by_user_id',
     ];

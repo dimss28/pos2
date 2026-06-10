@@ -6,6 +6,8 @@ class TableOrderModel {
   final String paymentMethod;
   final int totalPrice;
   final String? tableLabel;
+  final String? customerName;
+  final String? customerWhatsapp;
   final String? paymentProofUrl;
   final String? transactionTime;
 
@@ -17,6 +19,8 @@ class TableOrderModel {
     required this.paymentMethod,
     required this.totalPrice,
     this.tableLabel,
+    this.customerName,
+    this.customerWhatsapp,
     this.paymentProofUrl,
     this.transactionTime,
   });
@@ -31,6 +35,8 @@ class TableOrderModel {
       paymentMethod: (m['payment_method'] as String?) ?? '',
       totalPrice: (m['total_price'] as num?)?.toInt() ?? 0,
       tableLabel: table?['label'] as String?,
+      customerName: m['customer_name'] as String?,
+      customerWhatsapp: m['customer_whatsapp'] as String?,
       paymentProofUrl: m['payment_proof_url'] as String?,
       transactionTime: m['transaction_time'] as String?,
     );

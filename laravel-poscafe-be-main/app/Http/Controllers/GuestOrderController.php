@@ -47,8 +47,12 @@ class GuestOrderController extends Controller
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99'],
             'payment_method' => ['required', 'in:qris,transfer'],
             'customer_name' => ['nullable', 'string', 'max:100'],
+            'customer_whatsapp' => ['required', 'string', 'max:20', 'regex:/^(\+?62|0)8[1-9][0-9]{7,11}$/'],
             'notes' => ['nullable', 'string', 'max:500'],
             'payment_proof' => ['required_if:payment_method,transfer', 'file', 'image', 'max:5120'],
+        ], [
+            'customer_whatsapp.required' => 'No. WhatsApp wajib diisi.',
+            'customer_whatsapp.regex' => 'Format WhatsApp tidak valid. Contoh: 08123456789',
         ]);
 
         if ($data['payment_method'] === 'transfer' && ! StoreSetting::isTransferConfigured()) {
@@ -101,6 +105,7 @@ class GuestOrderController extends Controller
                 'change_amount' => 0,
                 'total_item' => $totalQty,
                 'customer_name' => $data['customer_name'] ?? null,
+                'customer_whatsapp' => self::normalizeWhatsapp($data['customer_whatsapp']),
                 'notes' => $data['notes'] ?? null,
                 'midtrans_order_id' => $data['payment_method'] === 'qris' ? $midtransOrderId : null,
             ]);
@@ -162,5 +167,15 @@ class GuestOrderController extends Controller
             'status_label' => $order->statusLabel(),
             'payment_method' => $order->payment_method,
         ]);
+    }
+
+    private static function normalizeWhatsapp(string $raw): string
+    {
+        $digits = preg_replace('/\D+/', '', $raw) ?? '';
+        if (str_starts_with($digits, '0')) {
+            $digits = '62'.substr($digits, 1);
+        }
+
+        return $digits;
     }
 }

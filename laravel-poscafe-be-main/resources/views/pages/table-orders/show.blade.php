@@ -30,9 +30,22 @@
                     <tr><th colspan="2">Total</th><th class="text-end">Rp {{ number_format($order->total_price, 0, ',', '.') }}</th></tr>
                 </tfoot>
             </table>
-            @if ($order->notes)
-                <p class="small text-muted mb-0"><strong>Catatan:</strong> {{ $order->notes }}</p>
-            @endif
+            <div class="mt-3 small">
+                @if ($order->customer_name)
+                    <p class="mb-1"><strong>Pelanggan:</strong> {{ $order->customer_name }}</p>
+                @endif
+                @if ($order->customer_whatsapp)
+                    <p class="mb-1">
+                        <strong>WhatsApp:</strong>
+                        <a href="https://wa.me/{{ $order->customer_whatsapp }}" target="_blank" rel="noopener">
+                            {{ $order->customer_whatsapp }}
+                        </a>
+                    </p>
+                @endif
+                @if ($order->notes)
+                    <p class="mb-0 text-muted"><strong>Catatan:</strong> {{ $order->notes }}</p>
+                @endif
+            </div>
         </div>
     </div>
     <div class="col-lg-4">

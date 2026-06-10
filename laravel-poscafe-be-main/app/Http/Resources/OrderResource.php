@@ -36,6 +36,7 @@ class OrderResource extends JsonResource
             'change_amount' => (int) $this->change_amount,
             'total_item' => $this->total_item,
             'customer_name' => $this->customer_name,
+            'customer_whatsapp' => $this->customer_whatsapp,
             'notes' => $this->notes,
             'order_items' => OrderItemResource::collection($this->whenLoaded('orderItems')),
         ];

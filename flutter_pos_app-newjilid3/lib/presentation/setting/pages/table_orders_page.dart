@@ -181,6 +181,20 @@ class _OrderCard extends StatelessWidget {
             '${order.paymentMethod.toUpperCase()} · ${order.totalPrice.currencyFormatRp.trim()}',
             style: AppTypography.bodyS.copyWith(color: p.onSurfaceVar),
           ),
+          if (order.customerName != null && order.customerName!.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              order.customerName!,
+              style: AppTypography.bodyS.copyWith(color: p.onSurface),
+            ),
+          ],
+          if (order.customerWhatsapp != null && order.customerWhatsapp!.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              'WA: ${order.customerWhatsapp}',
+              style: AppTypography.bodyS.copyWith(color: p.primary, fontWeight: FontWeight.w600),
+            ),
+          ],
           if (order.paymentProofUrl != null && order.paymentProofUrl!.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text('Ada bukti transfer', style: AppTypography.bodyS.copyWith(color: p.warning)),

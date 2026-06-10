@@ -28,6 +28,7 @@
                     <tr>
                         <th>Waktu</th>
                         <th>Meja</th>
+                        <th>WA</th>
                         <th>Total</th>
                         <th>Bayar</th>
                         <th>Status</th>
@@ -39,6 +40,13 @@
                         <tr>
                             <td class="small">{{ $o->transaction_time?->format('d/m H:i') }}</td>
                             <td class="fw-semibold">{{ $o->diningTable?->label ?? '—' }}</td>
+                            <td class="small">
+                                @if ($o->customer_whatsapp)
+                                    <a href="https://wa.me/{{ $o->customer_whatsapp }}" target="_blank" rel="noopener">{{ $o->customer_whatsapp }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
                             <td>Rp {{ number_format($o->total_price, 0, ',', '.') }}</td>
                             <td><span class="badge bg-light text-dark">{{ strtoupper($o->payment_method) }}</span></td>
                             <td><span class="badge bg-{{ $o->statusBadgeClass() }}">{{ $o->statusLabel() }}</span></td>
