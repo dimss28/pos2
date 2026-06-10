@@ -28,9 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('orders/kasir/{kasir_id}', [OrderController::class, 'getByKasirId']);
     Route::post('orders/{order}/refund', [RefundController::class, 'store'])->whereNumber('order');
 
-    // Categories
+    // Categories (unnamed routes — avoid clash with web `categories.index`)
     Route::get('list-categories', [CategoryController::class, 'index']);
-    Route::apiResource('categories', CategoryController::class)->only(['index']);
+    Route::get('categories', [CategoryController::class, 'index']);
 
     // Reports
     Route::prefix('reports')->group(function () {
