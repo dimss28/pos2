@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KasirKu · Login & Home Redesign</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    html, body { margin: 0; padding: 0; font-family: 'Quicksand', system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="theme.jsx"></script>
+  <script type="text/babel" src="icons.jsx"></script>
+  <script type="text/babel" src="android-frame.jsx"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="screens/login.jsx"></script>
+  <script type="text/babel" src="screens/home.jsx"></script>
+  <script type="text/babel" src="screens/home-empty.jsx"></script>
+  <script type="text/babel" src="screens/draft-order-empty.jsx"></script>
+  <script type="text/babel" src="screens/scanner.jsx"></script>
+  <script type="text/babel" src="screens/order-detail-empty.jsx"></script>
+  <script type="text/babel" src="screens/history-empty.jsx"></script>
+  <script type="text/babel" src="screens/settings.jsx"></script>
+  <script type="text/babel" src="screens/sync-data.jsx"></script>
+  <script type="text/babel" src="screens/printer.jsx"></script>
+  <script type="text/babel" src="screens/product.jsx"></script>
+  <script type="text/babel" src="screens/server-key.jsx"></script>
+  <script type="text/babel" src="screens/report.jsx"></script>
+  <script type="text/babel" src="screens/close-kasir.jsx"></script>
+  <script type="text/babel" src="screens/home-loaded.jsx"></script>
+  <script type="text/babel" src="screens/order-detail.jsx"></script>
+  <script type="text/babel" src="screens/draft-order.jsx"></script>
+  <script type="text/babel" src="screens/payment-flow.jsx"></script>
+  <script type="text/babel" src="screens/payment-qris.jsx"></script>
+  <script type="text/babel" src="screens/history-loaded.jsx"></script>
+  <script type="text/babel" src="screens/buka-kasir.jsx"></script>
+  <script type="text/babel" src="screens/transaction-detail.jsx"></script>
+  <script type="text/babel" src="screens/promo.jsx"></script>
+
+  <script type="text/babel">
+    // ─────────────────────────────────────────────────────────────
+    // POS Redesign — Login & Home variations on a design canvas
+    // ─────────────────────────────────────────────────────────────
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "palette": "caramel",
+      "show_design_notes": true
+    }/*EDITMODE-END*/;
+
+    // Custom device frame — simpler than the M3 default so palette can take over
+    function PhoneFrame({ children, palette, statusDark = false, navDark = false }) {
+      const p = palette;
+      const W = 380, H = 760;
+      return (
+        <div style={{
+          width: W, height: H, borderRadius: 36, overflow: 'hidden',
+          background: p.surface,
+          border: `8px solid #1a1a1a`,
+          boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
+          display: 'flex', flexDirection: 'column', position: 'relative',
+        }}>
+          {/* status bar */}
+          <div style={{
+            height: 36, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '0 20px', flexShrink: 0,
+            color: statusDark ? '#fff' : '#1a1a1a',
+            background: 'transparent',
+            position: 'relative', zIndex: 5,
+          }}>
+            <span style={{ fontWeight: 600, fontSize: 14 }}>9:30</span>
+            <div style={{
+              position: 'absolute', left: '50%', top: 6, transform: 'translateX(-50%)',
+              width: 80, height: 24, borderRadius: 14, background: '#0a0a0a',
+            }}/>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill={statusDark ? '#fff' : '#1a1a1a'}>
+                <path d="M8 11L0 3a11 11 0 0116 0L8 11z"/>
+              </svg>
+              <svg width="22" height="11" viewBox="0 0 22 11" fill="none">
+                <rect x="0.5" y="0.5" width="19" height="10" rx="2" stroke={statusDark ? '#fff' : '#1a1a1a'}/>
+                <rect x="2" y="2" width="14" height="7" rx="1" fill={statusDark ? '#fff' : '#1a1a1a'}/>
+                <rect x="20" y="3.5" width="1.5" height="4" rx="0.5" fill={statusDark ? '#fff' : '#1a1a1a'}/>
+              </svg>
+            </div>
+          </div>
+          {children}
+          {/* gesture pill */}
+          <div style={{
+            height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'transparent', flexShrink: 0,
+          }}>
+            <div style={{
+              width: 130, height: 5, borderRadius: 3,
+              background: navDark ? '#fff' : '#1a1a1a', opacity: 0.4,
+            }}/>
+          </div>
+        </div>
+      );
+    }
+
+    function NoteCard({ title, children, palette }) {
+      const p = palette;
+      return (
+        <div style={{
+          width: 320, padding: '18px 20px',
+          background: '#FFFCEC', border: `1px solid #E8D98C`,
+          borderRadius: 8, color: '#5a4a2a',
+          fontFamily: TYPE.family, fontSize: 13, lineHeight: '20px',
+          boxShadow: '0 2px 0 rgba(0,0,0,0.04)',
+        }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: '#3a2e10' }}>{title}</div>
+          {children}
+        </div>
+      );
+    }
+
+    function App() {
+      const [tweak, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const p = PALETTES[tweak.palette] || PALETTES.espresso;
+
+      return (
+        <>
+          <DesignCanvas>
+
+            <DCSection id="login" title="Login Page"
+                       subtitle="Classic centered — committed.">
+              <DCArtboard id="login-a" label="Login" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <LoginA palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="home-empty" title="Home · Empty State"
+                       subtitle="Setelah login, sebelum sync — informatif tentang kenapa kosong + CTA jelas.">
+              <DCArtboard id="home-empty-1" label="Home (belum sync)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <HomeEmpty palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="draft-empty" title="Draft Order · Empty State"
+                       subtitle="Pesanan yang ditunda pembayarannya — jelasin apa itu draft + cara bikinnya.">
+              <DCArtboard id="draft-empty-1" label="Draft Order (kosong)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <DraftOrderEmpty palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="scanner" title="Scanner Page"
+                       subtitle="Full-screen camera dengan viewport, scan line, dan input manual sebagai alternatif.">
+              <DCArtboard id="scanner-1" label="Scanner (idle)" width={380} height={760}>
+                <PhoneFrame palette={p} statusDark navDark>
+                  <ScannerPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="order-empty" title="Detail Order · Empty State"
+                       subtitle="Keranjang kosong — fokus arahin balik ke menu, bukan tampilin payment selector yg gak relevan.">
+              <DCArtboard id="order-empty-1" label="Detail Order (kosong)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <OrderDetailEmpty palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="history-empty" title="Riwayat · Empty State"
+                       subtitle="Belum ada transaksi — tetap tampilin struktur filter + summary supaya user paham apa yg akan muncul nanti.">
+              <DCArtboard id="history-empty-1" label="Riwayat (kosong)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <HistoryEmpty palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="settings" title="Pengaturan"
+                       subtitle="Grouped list dengan status live per item. Logout di-demote ke section Akun (destructive).">
+              <DCArtboard id="settings-1" label="Pengaturan" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <SettingsPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="sync-data" title="Sinkronisasi Data"
+                       subtitle="Per-item status, koneksi, aktivitas terakhir, sync-all dengan counter pending.">
+              <DCArtboard id="sync-data-1" label="Sync Data" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <SyncDataPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="printer" title="Printer Thermal"
+                       subtitle="Status koneksi + scan flow + cara pairing + permission hint.">
+              <DCArtboard id="printer-1" label="Printer Management" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <PrinterPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="product" title="Kelola Produk"
+                       subtitle="List dengan harga & stok visible + detail bottom-sheet + form add/edit.">
+              <DCArtboard id="product-list" label="List Produk" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <ManageProductPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="product-detail" label="Detail (bottom sheet)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <ProductDetailSheet palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="product-add" label="Tambah Produk" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <AddProductPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="server-key" title="Server Key QRIS"
+                       subtitle="Explainer + environment toggle + masked key + sensitivity hint.">
+              <DCArtboard id="server-key-1" label="Server Key QRIS" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <SaveServerKeyPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="report" title="Laporan Penjualan"
+                       subtitle="Date range chips, 4 metric cards dengan trend, mini chart, tabel produk + export PDF & share.">
+              <DCArtboard id="report-1" label="Laporan + Export" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <ReportPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="home-loaded" title="Home (after sync) · Grid + List view"
+                       subtitle="Setelah produk di-sync, dengan toggle grid/list dan badge qty untuk item yg sudah masuk keranjang.">
+              <DCArtboard id="home-grid" label="Grid view" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <HomeLoaded palette={p} view="grid"/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="home-list" label="List view" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <HomeLoaded palette={p} view="list"/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="order-detail" title="Detail Order · Checkout"
+                       subtitle="Line items proper + summary breakdown (subtotal/pajak/total) + payment picker + cash received & kembalian.">
+              <DCArtboard id="order-detail-1" label="Detail Order (Tunai)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <OrderDetailPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="draft-flow" title="Draft Order · Flow"
+                       subtitle="Open Bill (input meja + nama) → saved draft list (collapsed) → expanded item breakdown.">
+              <DCArtboard id="open-bill" label="1 · Open Bill (modal)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <OpenBillSheet palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="draft-list" label="2 · Draft Orders (collapsed)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <DraftOrdersPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="draft-expanded" label="3 · Draft Orders (expanded)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <DraftOrdersPage palette={p} expandedId={1}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="payment-flow" title="Payment Flow"
+                       subtitle="Tap Bayar → konfirmasi pembayaran (cash count + change) → sukses + receipt + cetak/share.">
+              <DCArtboard id="payment-confirm" label="1 · Konfirmasi Bayar" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <PaymentConfirmSheet palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="payment-success" label="2 · Pembayaran Sukses" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <PaymentSuccessSheet palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="payment-qris" title="Pembayaran QRIS"
+                       subtitle="QR code prominent + amount + countdown timer + status menunggu + actions (cetak / cek status / batal).">
+              <DCArtboard id="payment-qris-1" label="QRIS (menunggu scan)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <PaymentQRISSheet palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="history-loaded" title="Riwayat · Transaksi"
+                       subtitle="Filter chips + summary card + grouping per tanggal + cards expandable dengan share/print/detail.">
+              <DCArtboard id="history-loaded-1" label="Riwayat (dengan data)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <HistoryLoaded palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="buka-kasir" title="Buka Kasir · Open Shift"
+                       subtitle="Pasangan Close Kasir — input modal awal, pilih shift, cek persiapan (printer/QRIS/sync) sebelum mulai jualan.">
+              <DCArtboard id="buka-kasir-1" label="Buka Kasir" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <BukaKasirPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="txn-detail" title="Detail Transaksi (full page)"
+                       subtitle="Drill-down dari Riwayat. Permanent record dengan status banner, item, rincian, catatan, audit log, dan actions (cetak/share/refund).">
+              <DCArtboard id="txn-detail-1" label="Detail Transaksi" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <TransactionDetailPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="promo" title="Promo &amp; Voucher"
+                       subtitle="Diskon sheet saat checkout (auto promo + voucher code + manual) + page Kelola Promo di Setting.">
+              <DCArtboard id="discount-sheet" label="Apply diskon (di order)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <DiscountSheet palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+              <DCArtboard id="manage-promo" label="Kelola Promo (Setting)" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <ManagePromoPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+
+            <DCSection id="close-kasir" title="Tutup Kasir"
+                       subtitle="Proper reconciliation: shift summary + payment breakdown + cash recon dengan variance + notes + print closing.">
+              <DCArtboard id="close-kasir-1" label="Tutup Kasir" width={380} height={760}>
+                <PhoneFrame palette={p}>
+                  <CloseKasirPage palette={p}/>
+                </PhoneFrame>
+              </DCArtboard>
+            </DCSection>
+          </DesignCanvas>
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection label="Palette"/>
+              <TweakColorPalette
+                value={tweak.palette}
+                onChange={(v) => setTweak('palette', v)}
+                options={['espresso', 'caramel', 'matcha']}
+                labels={['Espresso', 'Caramel Latte', 'Matcha']}
+                resolve={(k) => PALETTES[k].primary}
+              />
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    // Swatches preview component
+    function PaletteSwatches({ palette }) {
+      const p = palette;
+      const swatches = [
+        { key: 'primary', label: 'Primary' },
+        { key: 'primaryContainer', label: 'Primary Container' },
+        { key: 'onSurface', label: 'On Surface' },
+        { key: 'surface', label: 'Surface' },
+        { key: 'surfaceVariant', label: 'Surface Variant' },
+        { key: 'success', label: 'Success' },
+        { key: 'warning', label: 'Warning' },
+        { key: 'error', label: 'Error' },
+      ];
+      return (
+        <div style={{
+          background: '#FFF', borderRadius: 12, padding: 24, height: '100%',
+          fontFamily: TYPE.family,
+          display: 'flex', flexDirection: 'column', gap: 16,
+        }}>
+          <div>
+            <div style={{ ...t('titleM'), color: p.onSurface }}>{p.name}</div>
+            <div style={{ ...t('bodyS'), color: p.onSurfaceVar, marginTop: 2 }}>
+              Color tokens — Material 3 ColorScheme dengan seed warna primary
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+            {swatches.map(s => (
+              <div key={s.key} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{
+                  height: 56, borderRadius: 10, background: p[s.key],
+                  border: `1px solid ${p.outlineSoft}`,
+                }}/>
+                <div>
+                  <div style={{ ...t('labelM'), color: p.onSurface }}>{s.label}</div>
+                  <div style={{ ...t('bodyS'), color: p.onSurfaceVar, fontFamily: 'ui-monospace, monospace' }}>
+                    {p[s.key]}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Custom palette swatch tweak — picks a key into PALETTES
+    function TweakColorPalette({ value, onChange, options, labels, resolve }) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '4px 0 8px' }}>
+          {options.map((opt, i) => {
+            const active = value === opt;
+            return (
+              <div key={opt}
+                onClick={() => onChange(opt)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '8px 10px', borderRadius: 8, cursor: 'pointer',
+                  background: active ? 'rgba(0,0,0,0.05)' : 'transparent',
+                  border: `1px solid ${active ? 'rgba(0,0,0,0.18)' : 'transparent'}`,
+                }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: 6,
+                  background: resolve(opt),
+                  boxShadow: '0 0 0 1px rgba(0,0,0,0.08)',
+                }}/>
+                <div style={{ flex: 1, fontSize: 13, color: '#1a1a1a' }}>{labels[i]}</div>
+                {active && <div style={{ fontSize: 12 }}>✓</div>}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

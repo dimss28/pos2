@@ -1,0 +1,8 @@
+# Copy to `android/key.properties` and fill in real values.
+# DO NOT commit the real key.properties — it is gitignored.
+# See ../docs/SIGNING.md for full walkthrough.
+
+storeFile=../keystore/poscafe-release.jks
+storePassword=CHANGEME_STORE_PASSWORD
+keyAlias=poscafe
+keyPassword=CHANGEME_KEY_PASSWORD

@@ -1,0 +1,34 @@
+# OS / archive junk
+__MACOSX/
+Thumbs.db
+.DS_Store
+
+# Legacy copy (not used)
+laravel-pos-backend-newjilid3/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+**/key.properties
+**/keystore/
+*.jks
+*.keystore
+
+# Laravel
+laravel-poscafe-be-main/vendor/
+laravel-poscafe-be-main/node_modules/
+laravel-poscafe-be-main/public/storage
+laravel-poscafe-be-main/public/hot
+laravel-poscafe-be-main/public/build
+laravel-poscafe-be-main/storage/logs/*.log
+laravel-poscafe-be-main/bootstrap/cache/*.php
+!laravel-poscafe-be-main/bootstrap/cache/.gitignore
+
+# Flutter
+flutter_pos_app-newjilid3/.dart_tool/
+flutter_pos_app-newjilid3/.flutter-plugins
+flutter_pos_app-newjilid3/.flutter-plugins-dependencies
+flutter_pos_app-newjilid3/build/
+flutter_pos_app-newjilid3/.idea/
+flutter_pos_app-newjilid3/*.iml
