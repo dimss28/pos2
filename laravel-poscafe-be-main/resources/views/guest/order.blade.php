@@ -793,6 +793,20 @@ function togglePayBoxes() {
     document.getElementById('checkoutMsg').innerHTML = '';
 }
 
+function parseJsonResponse(res, text) {
+    try {
+        return JSON.parse(text);
+    } catch (_) {
+        if (res.status === 419) {
+            throw new Error('Sesi habis. Muat ulang halaman lalu coba lagi.');
+        }
+        if (res.status >= 500) {
+            throw new Error('Server error. Hubungi kasir atau coba lagi nanti.');
+        }
+        throw new Error('Gagal kirim pesanan. Muat ulang halaman lalu coba lagi.');
+    }
+}
+
 document.getElementById('submitBtn').addEventListener('click', async () => {
     const items = Object.values(cart).filter(i => i.qty > 0).map(i => ({
         product_id: i.id, quantity: i.qty
@@ -837,7 +851,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
             headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
             body: fd,
         });
-        const data = await res.json();
+        const data = parseJsonResponse(res, await res.text());
         if (!res.ok) throw new Error(data.message || Object.values(data.errors || {}).flat().join(' ') || 'Gagal');
 
         currentOrderId = data.order_id;
@@ -864,7 +878,7 @@ async function pollStatus() {
     const res = await fetch(`/m/${token}/orders/${currentOrderId}/status`, {
         headers: { 'Accept': 'application/json' }
     });
-    const data = await res.json();
+    const data = parseJsonResponse(res, await res.text());
     if (data.status === 'paid') {
         clearInterval(pollTimer);
         showMsg('Pembayaran berhasil! Pesanan menunggu diproses kasir.', false);

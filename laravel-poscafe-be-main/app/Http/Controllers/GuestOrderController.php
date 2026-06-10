@@ -84,9 +84,23 @@ class GuestOrderController extends Controller
         }
 
         return DB::transaction(function () use ($data, $table, $lines, $subtotal, $totalQty, $request) {
-            $midtransOrderId = 'TBL-'.$table->id.'-'.now()->format('YmdHis').'-'.Str::upper(Str::random(4));
+            try {
+                return $this->persistGuestOrder($data, $table, $lines, $subtotal, $totalQty, $request);
+            } catch (\Illuminate\Database\QueryException $e) {
+                report($e);
 
-            $order = Order::create([
+                return response()->json([
+                    'message' => 'Gagal menyimpan pesanan. Admin perlu jalankan: php artisan migrate --force',
+                ], 500);
+            }
+        });
+    }
+
+    private function persistGuestOrder(array $data, DiningTable $table, array $lines, int $subtotal, int $totalQty, Request $request)
+    {
+        $midtransOrderId = 'TBL-'.$table->id.'-'.now()->format('YmdHis').'-'.Str::upper(Str::random(4));
+
+        $order = Order::create([
                 'transaction_time' => now(),
                 'order_source' => Order::SOURCE_TABLE_QR,
                 'dining_table_id' => $table->id,
@@ -141,7 +155,6 @@ class GuestOrderController extends Controller
                 'midtrans_order_id' => $midtransOrderId,
                 'total' => $subtotal,
             ]);
-        });
     }
 
     public function paymentStatus(string $token, Order $order)

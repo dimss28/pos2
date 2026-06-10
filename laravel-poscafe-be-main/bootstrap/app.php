@@ -18,22 +18,44 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
-        );
-        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, Request $request) {
+        $guestJson = fn (Request $request) => $request->is('api/*')
+            || $request->is('m/*')
+            || $request->expectsJson();
+
+        $exceptions->shouldRenderJsonWhen($guestJson);
+
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, Request $request) use ($guestJson) {
+            if (! $guestJson($request)) {
+                return null;
+            }
             if ($request->is('api/*')) {
                 return \App\Http\Responses\ApiResponse::error('Validasi gagal', 422, $e->errors());
             }
+
+            return response()->json([
+                'message' => collect($e->errors())->flatten()->first() ?? 'Validasi gagal.',
+                'errors' => $e->errors(),
+            ], 422);
         });
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return \App\Http\Responses\ApiResponse::error('Unauthenticated', 401);
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, Request $request) use ($guestJson) {
+            if ($guestJson($request)) {
+                return $request->is('api/*')
+                    ? \App\Http\Responses\ApiResponse::error('Unauthenticated', 401)
+                    : response()->json(['message' => 'Unauthenticated'], 401);
             }
         });
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return \App\Http\Responses\ApiResponse::error('Resource tidak ditemukan', 404);
+        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException $e, Request $request) use ($guestJson) {
+            if ($guestJson($request)) {
+                return $request->is('api/*')
+                    ? \App\Http\Responses\ApiResponse::error('Resource tidak ditemukan', 404)
+                    : response()->json(['message' => 'Resource tidak ditemukan'], 404);
+            }
+        });
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, Request $request) use ($guestJson) {
+            if ($guestJson($request)) {
+                return response()->json([
+                    'message' => 'Sesi habis. Muat ulang halaman lalu coba lagi.',
+                ], 419);
             }
         });
     })->create();
