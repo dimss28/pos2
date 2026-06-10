@@ -1,15 +1,8 @@
--- Data-only import for POS (run AFTER: php artisan migrate:fresh --force)
--- Tables must already exist from Laravel migrations.
+-- Data-only import for POS
+-- Run FIRST on server: php artisan migrate:fresh --force
+-- (tables must be empty — no TRUNCATE needed; MariaDB blocks TRUNCATE on FK tables)
 
 SET FOREIGN_KEY_CHECKS = 0;
-
-TRUNCATE TABLE `order_items`;
-TRUNCATE TABLE `orders`;
-TRUNCATE TABLE `cash_sessions`;
-TRUNCATE TABLE `personal_access_tokens`;
-TRUNCATE TABLE `products`;
-TRUNCATE TABLE `categories`;
-TRUNCATE TABLE `users`;
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone`, `avatar`, `is_active`, `deleted_at`, `last_login_at`, `last_login_ip`, `roles`, `email_verified_at`, `password`, `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Code with Bahri', 'bahri@fic11.com', '681-549-9977', NULL, 1, NULL, '2026-06-07 07:56:46', '192.168.18.202', 'owner', '2026-06-07 01:35:46', '$2y$12$h8mlVWspXBvEPo9asqmyUO8qMfg2ECxR3e.eRvTI7XdQ6rGVr5kuy', NULL, NULL, NULL, 'y4JG4zWl5d', '2026-06-07 01:35:47', '2026-06-07 07:56:46'),
