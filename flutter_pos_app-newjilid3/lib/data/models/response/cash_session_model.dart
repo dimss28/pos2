@@ -70,24 +70,52 @@ class CashSessionModel {
   /// - Local SQLite row shape (no expected_cash; ISO timestamps).
   factory CashSessionModel.fromMap(Map<String, dynamic> map) {
     return CashSessionModel(
-      id: (map['id'] as num?)?.toInt(),
-      userId: (map['user_id'] as num).toInt(),
-      userName: (map['user_name'] as String?) ?? '',
-      shiftLabel: map['shift_label'] as String,
-      openingFloat: (map['opening_float'] as num).toInt(),
+      id: _asInt(map['id']),
+      userId: _resolveUserId(map),
+      userName: _resolveUserName(map),
+      shiftLabel: (map['shift_label'] as String?) ?? 'Siang',
+      openingFloat: _asInt(map['opening_float']) ?? 0,
       openingNote: map['opening_note'] as String?,
       openedAt: DateTime.parse(map['opened_at'] as String),
-      cashIn: (map['cash_in'] as num?)?.toInt() ?? 0,
-      cashOut: (map['cash_out'] as num?)?.toInt() ?? 0,
-      physicalCount: (map['physical_count'] as num?)?.toInt(),
-      expectedCash: (map['expected_cash'] as num?)?.toInt(),
-      variance: (map['variance'] as num?)?.toInt(),
+      cashIn: _asInt(map['cash_in']) ?? 0,
+      cashOut: _asInt(map['cash_out']) ?? 0,
+      physicalCount: _asInt(map['physical_count']),
+      expectedCash: _asInt(map['expected_cash']),
+      variance: _asInt(map['variance']),
       closingNote: map['closing_note'] as String?,
       closedAt: map['closed_at'] == null
           ? null
           : DateTime.parse(map['closed_at'] as String),
-      isSync: (map['is_sync'] as num?)?.toInt() ?? 0,
+      isSync: _asInt(map['is_sync']) ?? 0,
     );
+  }
+
+  static int? _asInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
+
+  static int _resolveUserId(Map<String, dynamic> map) {
+    final direct = _asInt(map['user_id']);
+    if (direct != null) return direct;
+    final user = map['user'];
+    if (user is Map<String, dynamic>) {
+      return _asInt(user['id']) ?? 0;
+    }
+    return 0;
+  }
+
+  static String _resolveUserName(Map<String, dynamic> map) {
+    final direct = map['user_name'] as String?;
+    if (direct != null && direct.isNotEmpty) return direct;
+    final user = map['user'];
+    if (user is Map<String, dynamic>) {
+      return (user['name'] as String?) ?? '';
+    }
+    return '';
   }
 
   Map<String, dynamic> toMap() => {

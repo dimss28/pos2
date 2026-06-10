@@ -11,6 +11,8 @@ class CashSessionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user_id' => (int) $this->user_id,
+            'user_name' => $this->relationLoaded('user') ? $this->user->name : null,
             'user' => new UserResource($this->whenLoaded('user')),
             'shift_label' => $this->shift_label,
             'opening_float' => (int) $this->opening_float,

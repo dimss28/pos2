@@ -48,7 +48,11 @@ class CashSessionController extends Controller
             'opened_at' => now(),
         ]);
 
-        return ApiResponse::success(new CashSessionResource($session), 'Shift dibuka.', 201);
+        return ApiResponse::success(
+            new CashSessionResource($session->load('user')),
+            'Shift dibuka.',
+            201
+        );
     }
 
     public function show(int $id, Request $request)
@@ -63,7 +67,7 @@ class CashSessionController extends Controller
         $session = CashSession::where('user_id', $request->user()->id)->findOrFail($id);
 
         return ApiResponse::success([
-            'session' => new CashSessionResource($session),
+            'session' => new CashSessionResource($session->load('user')),
             'revenue_by_method' => $session->revenueByMethod(),
             'cash_revenue' => $session->cashRevenue(),
             'order_count' => $session->orders()->count(),
@@ -88,6 +92,9 @@ class CashSessionController extends Controller
             'closed_at' => now(),
         ]);
 
-        return ApiResponse::success(new CashSessionResource($session->fresh()), 'Shift ditutup.');
+        return ApiResponse::success(
+            new CashSessionResource($session->fresh()->load('user')),
+            'Shift ditutup.'
+        );
     }
 }
