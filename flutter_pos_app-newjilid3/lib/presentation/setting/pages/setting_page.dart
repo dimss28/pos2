@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/constants/store_branding.dart';
+import '../../../core/components/app_app_bar.dart';
 import '../../../core/components/app_list_group.dart';
 import '../../../core/components/app_section_label.dart';
 import '../../../core/components/app_status_pill.dart';
 import '../../../core/components/avatar.dart';
 import '../../../core/components/feedback.dart';
+import '../../../core/constants/store_branding.dart';
 import '../../../core/extensions/build_context_ext.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';

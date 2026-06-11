@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/components/app_button.dart';
 import '../../../core/components/app_text_field.dart';
+import '../../../core/components/brand_mark.dart';
 import '../../../core/constants/store_branding.dart';
 import '../../../core/components/feedback.dart';
 import '../../../core/theme/app_palette.dart';
