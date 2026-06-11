@@ -27,9 +27,9 @@ php artisan up
 
 echo ""
 echo "Selesai. Login:"
-echo "  Owner : bahri@fic11.com / 12345678"
-echo "  Admin : admin@fic11.com / 12345678"
-echo "  Kasir : kasir@fic11.com / 12345678"
+echo "  Owner : owner@cakslamet.com / 12345678"
+echo "  Admin : admin@cakslamet.com / 12345678"
+echo "  Kasir : kasir@cakslamet.com / 12345678"
 echo ""
 echo "Toko  : BEBEK GORENG CaK SLAMET"
 echo "Atur rekening transfer & Midtrans di Pengaturan Toko (web admin)."

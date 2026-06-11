@@ -11,20 +11,20 @@ class DatabaseSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Owner POS',
-                'email' => 'bahri@fic11.com',
+                'name' => 'Owner CaK Slamet',
+                'email' => 'owner@cakslamet.com',
                 'password' => '12345678',
                 'roles' => 'owner',
             ],
             [
-                'name' => 'Admin POS',
-                'email' => 'admin@fic11.com',
+                'name' => 'Admin CaK Slamet',
+                'email' => 'admin@cakslamet.com',
                 'password' => '12345678',
                 'roles' => 'admin',
             ],
             [
-                'name' => 'Kasir 1',
-                'email' => 'kasir@fic11.com',
+                'name' => 'Kasir CaK Slamet',
+                'email' => 'kasir@cakslamet.com',
                 'password' => '12345678',
                 'roles' => 'kasir',
             ],
