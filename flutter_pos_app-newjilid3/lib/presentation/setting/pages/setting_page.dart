@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/components/app_app_bar.dart';
+import '../../../core/constants/store_branding.dart';
 import '../../../core/components/app_list_group.dart';
 import '../../../core/components/app_section_label.dart';
 import '../../../core/components/app_status_pill.dart';
@@ -375,7 +375,7 @@ class _SettingPageState extends State<SettingPage> {
           const SizedBox(height: 24),
           Center(
             child: Text(
-              'POS · v1.0.0',
+              '${StoreBranding.launcherName} · v1.0.0',
               style:
                   AppTypography.bodyS.copyWith(color: p.onSurfaceVar),
             ),

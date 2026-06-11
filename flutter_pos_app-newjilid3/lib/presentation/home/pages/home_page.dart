@@ -15,7 +15,7 @@ import '../../../core/extensions/int_ext.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../data/datasources/auth_local_datasource.dart';
+import '../../../core/constants/store_branding.dart';
 import '../../../data/models/response/category_response_model.dart';
 import '../../../data/models/response/product_response_model.dart';
 import '../../order/pages/order_page.dart';
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   final _searchCtrl = TextEditingController();
   int _activeCategoryId = 0; // 0 = "Semua"
   _ViewMode _view = _ViewMode.grid;
-  String _storeTitle = 'BEBEK GORENG CaK SLAMET';
+  String _storeTitle = StoreBranding.name;
 
   @override
   void initState() {

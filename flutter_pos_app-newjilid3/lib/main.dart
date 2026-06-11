@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'core/constants/store_branding.dart';
 import 'core/bloc/app_bloc_observer.dart';
 import 'core/services/auth_interceptor.dart';
 import 'core/theme/app_palette.dart';
@@ -154,7 +155,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               navigatorKey: rootNavigatorKey,
               debugShowCheckedModeBanner: false,
-              title: 'POS',
+              title: StoreBranding.launcherName,
               theme: AppTheme.fromPalette(palette),
               home: const SplashPage(),
             );

@@ -1,3 +1,4 @@
+import 'package:flutter_pos_app/core/constants/store_branding.dart';
 import 'package:flutter_pos_app/data/models/receipt_branding.dart';
 import 'package:flutter_pos_app/data/models/response/auth_response_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -144,12 +145,12 @@ class AuthLocalDatasource {
   /// Simpan — after that, whatever they saved (including empty fields)
   /// is authoritative.
   static const ReceiptBranding _defaultBranding = ReceiptBranding(
-    storeName: 'BEBEK GORENG CaK SLAMET',
+    storeName: StoreBranding.name,
     addressLine1: '',
     addressLine2: '',
     email: '',
     phone: '',
-    footerLine1: 'Enak, Gurih, Nagih!',
+    footerLine1: StoreBranding.tagline,
     footerLine2: 'Terima kasih atas kunjungan Anda',
   );
 

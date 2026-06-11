@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/components/app_button.dart';
 import '../../../core/components/app_text_field.dart';
-import '../../../core/components/brand_mark.dart';
+import '../../../core/constants/store_branding.dart';
 import '../../../core/components/feedback.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         AppTextField(
           label: 'Email',
-          hint: 'kasir@cafe.id',
+          hint: StoreBranding.kasirEmail,
           leadingIcon: Icons.mail_outline,
           controller: _emailCtrl,
           keyboardType: TextInputType.emailAddress,
@@ -215,13 +215,23 @@ class _TitleBlock extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'POS',
+          StoreBranding.name,
+          textAlign: TextAlign.center,
           style:
-              AppTypography.displayM.copyWith(color: p.onSurface, fontSize: 28),
+              AppTypography.displayM.copyWith(color: p.onSurface, fontSize: 22),
         ),
         const SizedBox(height: 6),
         Text(
-          'Login to your account',
+          StoreBranding.tagline,
+          textAlign: TextAlign.center,
+          style: AppTypography.bodyS.copyWith(
+            color: p.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Masuk ke akun kasir / admin',
           style: AppTypography.bodyM.copyWith(color: p.onSurfaceVar),
         ),
       ],

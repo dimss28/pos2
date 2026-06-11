@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $table->label }} — {{ config('app.name') }}</title>
+    <title>{{ $table->label }} — {{ $storeName }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -604,7 +604,7 @@
     <div class="sheet">
         <div class="sheet-handle"></div>
         <h2>Checkout</h2>
-        <p class="sheet-sub">{{ $table->label }} · {{ config('app.name') }}</p>
+        <p class="sheet-sub">{{ $table->label }} · {{ $storeName }}</p>
 
         <div class="order-summary" id="orderSummary"></div>
 

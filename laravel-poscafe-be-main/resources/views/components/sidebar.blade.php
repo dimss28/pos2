@@ -5,7 +5,7 @@
     <div class="sidebar-brand">
         <a href="{{ route('home') }}">
             <img src="{{ asset('img/logo.svg') }}" alt="logo">
-            <span class="logo-name">{{ config('app.name') }}</span>
+            <span class="logo-name">{{ store_name() }}</span>
         </a>
     </div>
     <ul class="sidebar-menu">

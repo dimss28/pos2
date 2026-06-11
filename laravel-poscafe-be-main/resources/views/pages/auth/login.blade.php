@@ -6,7 +6,10 @@
         <div style="max-width:420px;width:100%">
             <div class="text-center mb-4">
                 <img src="{{ asset('img/logo.svg') }}" style="height:56px" class="mb-3" alt="logo">
-                <h2 class="h3 fw-bold">{{ config('app.name') }}</h2>
+                <h2 class="h3 fw-bold">{{ store_name() }}</h2>
+                @if (store_tagline())
+                    <p class="text-primary fw-semibold mb-1">{{ store_tagline() }}</p>
+                @endif
                 <p class="text-muted">{{ __('Masuk untuk melanjutkan ke panel admin') }}</p>
             </div>
 
@@ -20,6 +23,7 @@
                     <label class="form-label">{{ __('Email') }}</label>
                     <input type="email" name="email" value="{{ old('email') }}"
                            class="form-control form-control-lg @error('email') is-invalid @enderror"
+                           placeholder="owner@cakslamet.com"
                            autofocus required>
                     @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
@@ -52,11 +56,12 @@
         </div>
     </div>
     <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center text-white p-5"
-         style="background:linear-gradient(135deg,#2563EB,#1D4ED8)">
+         style="background:linear-gradient(135deg,#16A34A,#15803D)">
         <div class="text-center" style="max-width:420px">
-            <i class="fas fa-mug-hot fa-4x mb-4 opacity-75"></i>
-            <h3 class="fw-bold">{{ __('Kelola Bisnis Cafe Anda dengan Mudah') }}</h3>
-            <p class="opacity-75">{{ __('Dashboard, produk, transaksi, dan laporan POS — semua dalam satu tempat.') }}</p>
+            <i class="fas fa-drumstick-bite fa-4x mb-4 opacity-75"></i>
+            <h3 class="fw-bold">{{ store_name() }}</h3>
+            <p class="opacity-75 mb-2">{{ store_tagline() ?: 'Makan enak, harga bersahabat!' }}</p>
+            <p class="opacity-75 small">{{ __('Menu, pesanan meja QR, transaksi kasir, dan laporan — semua dalam satu tempat.') }}</p>
         </div>
     </div>
 </div>

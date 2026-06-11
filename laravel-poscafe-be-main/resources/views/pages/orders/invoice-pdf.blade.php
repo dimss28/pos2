@@ -13,7 +13,7 @@ th, td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
 </head><body>
 <div class="header">
     <div>
-        <div class="h1">{{ config('app.name') }}</div>
+        <div class="h1">{{ store_name() }}</div>
         <div>Invoice</div>
     </div>
     <div class="right">

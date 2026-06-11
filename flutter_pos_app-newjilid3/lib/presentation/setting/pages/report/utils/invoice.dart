@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_pos_app/core/constants/store_branding.dart';
 import 'package:flutter_pos_app/core/extensions/int_ext.dart';
 import 'package:flutter_pos_app/core/extensions/string_ext.dart';
 import 'package:intl/intl.dart';
@@ -54,7 +55,7 @@ class Invoice {
 
     return HelperPdfService.saveDocument(
         name:
-            'POS | Report | ${DateTime.now().millisecondsSinceEpoch}.pdf',
+            '${StoreBranding.name} | Laporan | ${DateTime.now().millisecondsSinceEpoch}.pdf',
         pdf: pdf);
   }
 
@@ -66,11 +67,13 @@ class Invoice {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 1 * PdfPageFormat.cm),
-            Text('POS | Report',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                )),
+            Text(
+              '${StoreBranding.name} | Laporan',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             SizedBox(height: 0.2 * PdfPageFormat.cm),
             Text(
               'Created At: ${DateFormat('dd MMM yyyy').format(DateTime.now())}',

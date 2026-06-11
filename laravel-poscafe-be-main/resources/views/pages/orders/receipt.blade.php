@@ -11,7 +11,7 @@ table { width: 100%; }
 </style>
 </head><body onload="window.print()">
 <div class="center">
-    <strong>{{ config('app.name') }}</strong><br>
+    <strong>{{ store_name() }}</strong><br>
     Jl. Contoh No. 1, Jakarta
 </div>
 <hr>

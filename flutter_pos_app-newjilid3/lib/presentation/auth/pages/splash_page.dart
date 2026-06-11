@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/store_branding.dart';
 import '../../../core/components/brand_mark.dart';
 import '../../../core/components/feedback.dart';
 import '../../../core/services/printer_service.dart';
@@ -175,8 +176,16 @@ class _SplashPageState extends State<SplashPage> {
               const BrandMark(size: 96),
               const SizedBox(height: AppSpacing.xl),
               Text(
-                'POS',
+                StoreBranding.launcherName,
                 style: AppTypography.titleL.copyWith(color: p.onSurface),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                StoreBranding.tagline,
+                style: AppTypography.bodyS.copyWith(
+                  color: p.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: AppSpacing.huge),
               SizedBox(
