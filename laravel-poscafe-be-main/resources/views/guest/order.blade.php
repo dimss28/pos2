@@ -9,25 +9,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #B8743D;
-            --primary-dark: #8A5527;
-            --primary-container: #F8E6D0;
-            --on-primary-container: #4A2810;
-            --surface: #FBF6EE;
-            --surface-variant: #EFE4D2;
-            --outline-soft: #EBDFCB;
-            --on-surface: #241B12;
-            --on-surface-var: #6E5E48;
-            --success: #5A7A3A;
-            --success-container: #E3EFD0;
-            --warning: #B87A1E;
-            --warning-container: #F8E6C2;
-            --error: #A8392E;
-            --error-container: #F5D7D3;
+            --primary: #16A34A;
+            --primary-dark: #14532D;
+            --primary-container: #DCFCE7;
+            --on-primary-container: #14532D;
+            --surface: #F4F7F4;
+            --surface-variant: #E8F0E8;
+            --outline-soft: #D4E4D4;
+            --on-surface: #0F1A12;
+            --on-surface-var: #4B5E4F;
+            --success: #15803D;
+            --success-container: #DCFCE7;
+            --warning: #CA8A04;
+            --warning-container: #FEF9C3;
+            --error: #DC2626;
+            --error-container: #FEE2E2;
             --white: #fff;
+            --header-bg: #0B140E;
+            --neon: #4ADE80;
             --radius-sm: 8px;
             --radius-md: 12px;
-            --shadow: 0 2px 8px rgba(36, 27, 18, .08);
+            --shadow: 0 2px 8px rgba(15, 26, 18, .08);
             --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -42,44 +44,66 @@
 
         /* ── header ── */
         .header {
-            padding: 14px 16px 0;
+            padding: 0 0 12px;
             position: sticky;
             top: 0;
             z-index: 10;
-            background: var(--surface);
+            background: var(--header-bg);
+            color: var(--white);
+            border-bottom: 3px solid var(--neon);
+        }
+        .header-inner {
+            padding: 14px 16px 0;
         }
         .header-top {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             gap: 12px;
         }
+        .brand-block {
+            flex: 1;
+            min-width: 0;
+        }
         .store-name {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--on-surface);
-            line-height: 1.2;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.25;
+            letter-spacing: .01em;
         }
         .store-tagline {
-            margin-top: 2px;
-            font-size: .8rem;
+            margin-top: 4px;
+            font-size: .78rem;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--neon);
         }
         .table-badge {
             flex-shrink: 0;
-            background: var(--primary-container);
-            color: var(--primary-dark);
-            font-size: .75rem;
+            background: rgba(74, 222, 128, .15);
+            color: var(--neon);
+            border: 1px solid rgba(74, 222, 128, .35);
+            font-size: .72rem;
             font-weight: 700;
             padding: 6px 12px;
             border-radius: 999px;
             letter-spacing: .02em;
+            margin-top: 2px;
         }
         .header-sub {
-            margin-top: 4px;
-            font-size: .8rem;
-            color: var(--on-surface-var);
+            margin-top: 8px;
+            padding: 0 16px 10px;
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .7);
+        }
+        .promo-strip {
+            background: var(--primary-container);
+            color: var(--primary-dark);
+            text-align: center;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            padding: 8px 16px;
         }
 
         /* ── search ── */
@@ -154,7 +178,7 @@
             transition: border-color .15s, box-shadow .15s;
         }
         .product.in-cart {
-            border-color: rgba(184, 116, 61, .55);
+            border-color: rgba(22, 163, 74, .55);
             border-width: 1.5px;
             box-shadow: var(--shadow);
         }
@@ -197,12 +221,15 @@
             border: 2px solid var(--surface);
         }
         .product-name {
-            font-size: .82rem;
-            font-weight: 600;
-            line-height: 1.3;
-            white-space: nowrap;
+            font-size: .78rem;
+            font-weight: 700;
+            line-height: 1.25;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            min-height: 2.5em;
         }
         .product-cat {
             font-size: .7rem;
@@ -277,14 +304,15 @@
             right: 16px;
             max-width: 488px;
             margin: 0 auto;
-            background: var(--on-surface);
+            background: linear-gradient(135deg, #14532D, #166534);
             color: var(--white);
+            border: 1px solid rgba(74, 222, 128, .25);
             border-radius: var(--radius-md);
             padding: 12px 14px;
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 20px rgba(36, 27, 18, .25);
+            box-shadow: 0 4px 20px rgba(15, 26, 18, .3);
             z-index: 15;
             transform: translateY(120%);
             opacity: 0;
@@ -301,8 +329,8 @@
         .btn-checkout {
             border: none;
             border-radius: var(--radius-sm);
-            background: var(--primary);
-            color: var(--white);
+            background: var(--neon);
+            color: var(--header-bg);
             font: inherit;
             font-weight: 700;
             font-size: .88rem;
@@ -416,7 +444,7 @@
         .field input:focus, .field textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(184, 116, 61, .15);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, .15);
         }
         .field-hint {
             font-size: .75rem;
@@ -522,15 +550,22 @@
 <body>
 
 <header class="header">
-    <div class="header-top">
-        <div class="store-name">{{ $storeName }}</div>
-        @if (!empty($storeTagline))
-            <div class="store-tagline">{{ $storeTagline }}</div>
-        @endif
-        <div class="table-badge">{{ $table->label }}</div>
+    <div class="header-inner">
+        <div class="header-top">
+            <div class="brand-block">
+                <div class="store-name">{{ $storeName }}</div>
+                @if (!empty($storeTagline))
+                    <div class="store-tagline">{{ $storeTagline }}</div>
+                @endif
+            </div>
+            <div class="table-badge">{{ $table->label }}</div>
+        </div>
     </div>
-    <div class="header-sub">Pilih menu & bayar dari HP Anda</div>
+    <div class="header-sub">Scan & pesan · bayar dari HP Anda</div>
 </header>
+@if (!empty($storeTagline))
+    <div class="promo-strip">PEDASNYA NAMPOL! · MAKAN ENAK HARGA BERSAHABAT!</div>
+@endif
 
 <div class="search-wrap">
     <div class="search-box">
@@ -586,8 +621,8 @@
     @endforeach
     @unless ($hasProducts)
         <div class="empty">
-            <div class="empty-icon">☕</div>
-            <p>Menu belum tersedia.<br>Silakan hubungi kasir.</p>
+            <div class="empty-icon">🦆</div>
+            <p><strong>Menu belum tersedia</strong><br>Silakan hubungi kasir.</p>
         </div>
     @endunless
 </div>
@@ -603,7 +638,7 @@
 <div class="modal" id="checkoutModal">
     <div class="sheet">
         <div class="sheet-handle"></div>
-        <h2>Checkout</h2>
+        <h2>Selesaikan pesanan</h2>
         <p class="sheet-sub">{{ $table->label }} · {{ $storeName }}</p>
 
         <div class="order-summary" id="orderSummary"></div>
@@ -630,10 +665,13 @@
                 @if ($midtransReady)
                     <button type="button" class="pay-btn active" data-method="qris">QRIS</button>
                 @endif
-                @if (\App\Models\StoreSetting::isTransferConfigured())
+                @if ($transferConfigured)
                     <button type="button" class="pay-btn {{ $midtransReady ? '' : 'active' }}" data-method="transfer">Transfer</button>
                 @endif
             </div>
+            @unless ($hasPayment)
+                <div class="msg err" style="margin-top:10px">Pembayaran online belum diatur. Silakan bayar ke kasir.</div>
+            @endunless
         </div>
 
         <div id="transferBox" class="hidden">
@@ -665,12 +703,13 @@
 
         <div id="checkoutMsg"></div>
 
-        <button type="button" class="btn-primary" id="submitBtn">Kirim pesanan</button>
+        <button type="button" class="btn-primary" id="submitBtn" @unless($hasPayment) disabled @endunless>Kirim pesanan</button>
         <button type="button" class="btn-secondary" id="closeModal">Tutup</button>
     </div>
 </div>
 
 <script>
+const hasPayment = @json($hasPayment);
 const token = @json($table->qr_token);
 const csrf = document.querySelector('meta[name="csrf-token"]').content;
 const cart = {};
@@ -764,7 +803,7 @@ document.getElementById('searchInput').addEventListener('input', filterProducts)
 function filterProducts() {
     const q = document.getElementById('searchInput').value.trim().toLowerCase();
     document.querySelectorAll('.product').forEach(card => {
-        const matchCat = activeCategory === 'all' || card.dataset.cat === activeCategory;
+        const matchCat = activeCategory === 'all' || card.dataset.cat === String(activeCategory);
         const matchSearch = !q || card.dataset.name.toLowerCase().includes(q);
         card.classList.toggle('hidden', !(matchCat && matchSearch));
     });
@@ -817,6 +856,10 @@ function parseJsonResponse(res, text) {
 }
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
+    if (!hasPayment) {
+        showMsg('Pembayaran online belum diatur. Hubungi kasir.', true);
+        return;
+    }
     const items = Object.values(cart).filter(i => i.qty > 0).map(i => ({
         product_id: i.id, quantity: i.qty
     }));

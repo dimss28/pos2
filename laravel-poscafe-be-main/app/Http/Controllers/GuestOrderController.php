@@ -30,6 +30,8 @@ class GuestOrderController extends Controller
 
         $transfer = StoreSetting::transferBank();
         $midtransReady = StoreSetting::isQrisEnabled();
+        $transferConfigured = StoreSetting::isTransferConfigured();
+        $hasPayment = $midtransReady || $transferConfigured;
         $storeName = store_name();
         $storeTagline = store_tagline();
 
@@ -38,6 +40,8 @@ class GuestOrderController extends Controller
             'categories',
             'transfer',
             'midtransReady',
+            'transferConfigured',
+            'hasPayment',
             'storeName',
             'storeTagline',
         ));
