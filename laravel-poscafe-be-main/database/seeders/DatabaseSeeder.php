@@ -10,18 +10,31 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $password = Hash::make('12345678');
+
         User::factory()->owner()->create([
-            'name' => 'POS Owner',
-            'email' => 'owner@pos.com',
-            'password' => Hash::make('12345678'),
+            'name' => 'Owner POS',
+            'email' => 'bahri@fic11.com',
+            'password' => $password,
         ]);
 
-        User::factory()->admin()->count(2)->create();
-        User::factory()->count(5)->create();
+        User::factory()->admin()->create([
+            'name' => 'Admin POS',
+            'email' => 'admin@fic11.com',
+            'password' => $password,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Kasir 1',
+            'email' => 'kasir@fic11.com',
+            'password' => $password,
+            'roles' => 'kasir',
+        ]);
 
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            StoreSetupSeeder::class,
         ]);
 
         if (app()->environment('local', 'testing')) {
