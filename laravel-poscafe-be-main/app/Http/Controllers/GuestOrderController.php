@@ -76,11 +76,17 @@ class GuestOrderController extends Controller
             return response()->json(['message' => 'QRIS belum diaktifkan admin.'], 422);
         }
 
+        $productIds = collect($data['items'])->pluck('product_id')->unique()->all();
+        $products = Product::query()->whereIn('id', $productIds)->get()->keyBy('id');
+
         $lines = [];
         $subtotal = 0;
         $totalQty = 0;
         foreach ($data['items'] as $row) {
-            $product = Product::findOrFail($row['product_id']);
+            $product = $products->get($row['product_id']);
+            if (! $product) {
+                return response()->json(['message' => 'Produk tidak ditemukan.'], 422);
+            }
             if ($product->stock < $row['quantity']) {
                 return response()->json([
                     'message' => "{$product->name} stok tidak cukup.",
@@ -96,78 +102,112 @@ class GuestOrderController extends Controller
             ];
         }
 
-        return DB::transaction(function () use ($data, $table, $lines, $subtotal, $totalQty, $request) {
+        try {
+            $order = DB::transaction(function () use ($data, $table, $lines, $subtotal, $totalQty) {
+                return $this->createGuestOrder($data, $table, $lines, $subtotal, $totalQty);
+            });
+        } catch (\Illuminate\Database\QueryException $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Gagal menyimpan pesanan. Admin perlu jalankan: php artisan migrate --force',
+            ], 500);
+        }
+
+        if ($data['payment_method'] === 'transfer') {
             try {
-                return $this->persistGuestOrder($data, $table, $lines, $subtotal, $totalQty, $request);
-            } catch (\Illuminate\Database\QueryException $e) {
-                report($e);
-
-                return response()->json([
-                    'message' => 'Gagal menyimpan pesanan. Admin perlu jalankan: php artisan migrate --force',
-                ], 500);
-            }
-        });
-    }
-
-    private function persistGuestOrder(array $data, DiningTable $table, array $lines, int $subtotal, int $totalQty, Request $request)
-    {
-        $midtransOrderId = 'TBL-'.$table->id.'-'.now()->format('YmdHis').'-'.Str::upper(Str::random(4));
-
-        $order = Order::create([
-                'transaction_time' => now(),
-                'order_source' => Order::SOURCE_TABLE_QR,
-                'dining_table_id' => $table->id,
-                'kasir_id' => null,
-                'cash_session_id' => null,
-                'payment_method' => $data['payment_method'],
-                'status' => $data['payment_method'] === 'transfer'
-                    ? Order::STATUS_PAID
-                    : Order::STATUS_AWAITING_PAYMENT,
-                'subtotal' => $subtotal,
-                'discount' => 0,
-                'discount_amount' => 0,
-                'tax' => 0,
-                'total_price' => $subtotal,
-                'amount_paid' => $data['payment_method'] === 'transfer' ? $subtotal : 0,
-                'change_amount' => 0,
-                'total_item' => $totalQty,
-                'customer_name' => $data['customer_name'] ?? null,
-                'customer_whatsapp' => self::normalizeWhatsapp($data['customer_whatsapp']),
-                'notes' => $data['notes'] ?? null,
-                'midtrans_order_id' => $data['payment_method'] === 'qris' ? $midtransOrderId : null,
-            ]);
-
-            foreach ($lines as $line) {
-                $order->orderItems()->create([
-                    'product_id' => $line['product']->id,
-                    'quantity' => $line['quantity'],
-                    'total_price' => $line['total_price'],
-                ]);
-                $line['product']->decrement('stock', $line['quantity']);
-            }
-
-            if ($data['payment_method'] === 'transfer') {
                 $path = $request->file('payment_proof')->store('payment-proofs', 'public');
                 $order->update(['payment_proof_path' => $path]);
+            } catch (\Throwable $e) {
+                report($e);
+                $this->cancelGuestOrder($order, $lines);
 
-                return response()->json([
-                    'success' => true,
-                    'order_id' => $order->id,
-                    'status' => $order->status,
-                    'message' => 'Pesanan dikirim. Menunggu diproses kasir.',
-                ]);
+                return response()->json(['message' => 'Gagal menyimpan bukti transfer. Coba lagi.'], 500);
             }
-
-            $charge = app(MidtransService::class)->chargeQris($midtransOrderId, $subtotal);
 
             return response()->json([
                 'success' => true,
                 'order_id' => $order->id,
                 'status' => $order->status,
-                'qr_url' => $charge['qr_url'],
-                'midtrans_order_id' => $midtransOrderId,
-                'total' => $subtotal,
+                'message' => 'Pesanan dikirim. Menunggu diproses kasir.',
             ]);
+        }
+
+        try {
+            $charge = app(MidtransService::class)->chargeQris(
+                (string) $order->midtrans_order_id,
+                (int) $order->total_price
+            );
+        } catch (\Throwable $e) {
+            report($e);
+            $this->cancelGuestOrder($order, $lines);
+
+            return response()->json([
+                'message' => 'Gagal membuat QRIS. Coba lagi atau pilih transfer.',
+            ], 502);
+        }
+
+        return response()->json([
+            'success' => true,
+            'order_id' => $order->id,
+            'status' => $order->status,
+            'qr_url' => $charge['qr_url'],
+            'midtrans_order_id' => $order->midtrans_order_id,
+            'total' => (int) $order->total_price,
+        ]);
+    }
+
+    private function createGuestOrder(array $data, DiningTable $table, array $lines, int $subtotal, int $totalQty): Order
+    {
+        $midtransOrderId = 'TBL-'.$table->id.'-'.now()->format('YmdHis').'-'.Str::upper(Str::random(4));
+
+        $order = Order::create([
+            'transaction_time' => now(),
+            'order_source' => Order::SOURCE_TABLE_QR,
+            'dining_table_id' => $table->id,
+            'kasir_id' => null,
+            'cash_session_id' => null,
+            'payment_method' => $data['payment_method'],
+            'status' => $data['payment_method'] === 'transfer'
+                ? Order::STATUS_PAID
+                : Order::STATUS_AWAITING_PAYMENT,
+            'subtotal' => $subtotal,
+            'discount' => 0,
+            'discount_amount' => 0,
+            'tax' => 0,
+            'total_price' => $subtotal,
+            'amount_paid' => $data['payment_method'] === 'transfer' ? $subtotal : 0,
+            'change_amount' => 0,
+            'total_item' => $totalQty,
+            'customer_name' => $data['customer_name'] ?? null,
+            'customer_whatsapp' => self::normalizeWhatsapp($data['customer_whatsapp']),
+            'notes' => $data['notes'] ?? null,
+            'midtrans_order_id' => $data['payment_method'] === 'qris' ? $midtransOrderId : null,
+        ]);
+
+        foreach ($lines as $line) {
+            $order->orderItems()->create([
+                'product_id' => $line['product']->id,
+                'quantity' => $line['quantity'],
+                'total_price' => $line['total_price'],
+            ]);
+            Product::whereKey($line['product']->id)->decrement('stock', $line['quantity']);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param  array<int, array{product: Product, quantity: int, total_price: int}>  $lines
+     */
+    private function cancelGuestOrder(Order $order, array $lines): void
+    {
+        DB::transaction(function () use ($order, $lines) {
+            foreach ($lines as $line) {
+                Product::whereKey($line['product']->id)->increment('stock', $line['quantity']);
+            }
+            $order->update(['status' => Order::STATUS_CANCELLED]);
+        });
     }
 
     public function paymentStatus(string $token, Order $order)

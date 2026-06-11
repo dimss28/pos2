@@ -44,6 +44,8 @@ class MidtransService
 
         $response = Http::withBasicAuth($key, '')
             ->acceptJson()
+            ->connectTimeout(5)
+            ->timeout(15)
             ->post($this->baseUrl().'/v2/charge', [
                 'payment_type' => 'gopay',
                 'transaction_details' => [
@@ -92,6 +94,8 @@ class MidtransService
 
         $response = Http::withBasicAuth($key, '')
             ->acceptJson()
+            ->connectTimeout(5)
+            ->timeout(10)
             ->get($this->baseUrl().'/v2/'.$orderId.'/status');
 
         if (! $response->successful()) {

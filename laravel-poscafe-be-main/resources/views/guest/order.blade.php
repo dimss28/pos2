@@ -530,7 +530,21 @@
             cursor: pointer;
             margin-top: 16px;
         }
-        .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-primary:disabled { opacity: .7; cursor: wait; }
+        .btn-primary.loading { position: relative; color: transparent; }
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .btn-secondary {
             width: 100%;
             border: none;
@@ -855,6 +869,36 @@ function parseJsonResponse(res, text) {
     }
 }
 
+function setSubmitLoading(on, label) {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = on;
+    btn.classList.toggle('loading', on);
+    btn.dataset.label = btn.dataset.label || btn.textContent;
+    btn.textContent = on ? (label || 'Memproses...') : btn.dataset.label;
+}
+
+async function compressProofFile(file) {
+    if (!file || !file.type.startsWith('image/') || file.size < 400000) {
+        return file;
+    }
+    try {
+        const bitmap = await createImageBitmap(file);
+        const maxW = 1280;
+        const scale = Math.min(1, maxW / bitmap.width);
+        const w = Math.round(bitmap.width * scale);
+        const h = Math.round(bitmap.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+        const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.82));
+        if (!blob) return file;
+        return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
+    } catch (_) {
+        return file;
+    }
+}
+
 document.getElementById('submitBtn').addEventListener('click', async () => {
     if (!hasPayment) {
         showMsg('Pembayaran online belum diatur. Hubungi kasir.', true);
@@ -893,10 +937,12 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
             showMsg('Upload bukti transfer wajib.', true);
             return;
         }
-        fd.append('payment_proof', file);
+        setSubmitLoading(true, 'Mengompres foto...');
+        const proof = await compressProofFile(file);
+        fd.append('payment_proof', proof);
     }
 
-    document.getElementById('submitBtn').disabled = true;
+    setSubmitLoading(true, paymentMethod === 'qris' ? 'Membuat QRIS...' : 'Mengirim pesanan...');
     try {
         const res = await fetch(`/m/${token}/checkout`, {
             method: 'POST',
@@ -921,7 +967,8 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
     } catch (e) {
         showMsg(e.message, true);
     } finally {
-        document.getElementById('submitBtn').disabled = false;
+        const hidden = document.getElementById('submitBtn').classList.contains('hidden');
+        if (!hidden) setSubmitLoading(false);
     }
 });
 
