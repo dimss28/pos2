@@ -14,8 +14,8 @@ class PaymentSettingsController extends Controller
         $midtrans = app(MidtransService::class);
 
         return ApiResponse::success([
-            'store_name' => StoreSetting::get('store_name', config('app.name')),
-            'store_tagline' => StoreSetting::get('store_tagline', ''),
+            'store_name' => store_name(),
+            'store_tagline' => store_tagline(),
             'qris_enabled' => StoreSetting::isQrisEnabled(),
             'midtrans_configured' => $midtrans->isConfigured(),
             'midtrans_environment' => $midtrans->isProduction() ? 'production' : 'sandbox',

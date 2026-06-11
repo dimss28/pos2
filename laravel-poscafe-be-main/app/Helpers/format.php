@@ -37,3 +37,37 @@ if (! function_exists('initials')) {
         return strtoupper(mb_substr($parts[0], 0, 2));
     }
 }
+
+if (! function_exists('store_name')) {
+    function store_name(): string
+    {
+        $fallback = (string) config('app.name', 'BEBEK GORENG CaK SLAMET');
+
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('store_settings')) {
+                return $fallback;
+            }
+
+            $name = \App\Models\StoreSetting::get('store_name');
+
+            return $name !== null && $name !== '' ? $name : $fallback;
+        } catch (\Throwable) {
+            return $fallback;
+        }
+    }
+}
+
+if (! function_exists('store_tagline')) {
+    function store_tagline(): string
+    {
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('store_settings')) {
+                return '';
+            }
+
+            return (string) (\App\Models\StoreSetting::get('store_tagline') ?? '');
+        } catch (\Throwable) {
+            return '';
+        }
+    }
+}

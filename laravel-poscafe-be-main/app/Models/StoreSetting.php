@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class StoreSetting extends Model
 {
@@ -16,11 +17,23 @@ class StoreSetting extends Model
 
     public static function get(string $key, ?string $default = null): ?string
     {
-        return self::query()->find($key)?->value ?? $default;
+        try {
+            if (! Schema::hasTable('store_settings')) {
+                return $default;
+            }
+
+            return self::query()->find($key)?->value ?? $default;
+        } catch (\Throwable) {
+            return $default;
+        }
     }
 
     public static function set(string $key, ?string $value): void
     {
+        if (! Schema::hasTable('store_settings')) {
+            return;
+        }
+
         self::query()->updateOrCreate(['key' => $key], ['value' => $value]);
     }
 

@@ -30,8 +30,8 @@ class GuestOrderController extends Controller
 
         $transfer = StoreSetting::transferBank();
         $midtransReady = StoreSetting::isQrisEnabled();
-        $storeName = StoreSetting::get('store_name', config('app.name'));
-        $storeTagline = StoreSetting::get('store_tagline', '');
+        $storeName = store_name();
+        $storeTagline = store_tagline();
 
         return view('guest.order', compact(
             'table',
