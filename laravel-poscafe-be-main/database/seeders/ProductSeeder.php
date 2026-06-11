@@ -11,33 +11,45 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $menu = [
-            'Minuman' => [
-                ['name' => 'Kopi Susu', 'price' => 18000, 'stock' => 99, 'is_best_seller' => true],
-                ['name' => 'Espresso', 'price' => 15000, 'stock' => 99],
-                ['name' => 'Cappuccino', 'price' => 22000, 'stock' => 99],
-                ['name' => 'Latte', 'price' => 23000, 'stock' => 99],
-                ['name' => 'Americano', 'price' => 17000, 'stock' => 99],
-                ['name' => 'Teh Tarik', 'price' => 12000, 'stock' => 99],
-                ['name' => 'Es Teh Manis', 'price' => 8000, 'stock' => 99],
-                ['name' => 'Matcha Latte', 'price' => 25000, 'stock' => 99, 'is_best_seller' => true],
-                ['name' => 'Cokelat Panas', 'price' => 20000, 'stock' => 99],
+            'Makan' => [
+                ['name' => 'BEBEK GORENG SLAMET', 'price' => 30000, 'is_best_seller' => true],
+                ['name' => 'BEBEK GORENG GALAK', 'price' => 30000, 'is_best_seller' => true],
+                ['name' => 'AYAM KAMPUNG GORENG', 'price' => 30000],
+                ['name' => 'IKAN PATIN GORENG', 'price' => 30000],
+                ['name' => 'IKAN NILA GORENG', 'price' => 30000],
+                ['name' => 'UDANG GORENG TEPUNG', 'price' => 25000],
+                ['name' => 'CUMI GORENG TEPUNG', 'price' => 25000],
+                ['name' => 'AYAM RAS GORENG', 'price' => 20000],
+                ['name' => 'IKAN LELE GORENG', 'price' => 20000],
+                ['name' => 'TELOR SAMBEL PENYET', 'price' => 15000],
+                ['name' => 'GEGACOK TERONG', 'price' => 15000],
+                ['name' => 'CAH KANGKUNG', 'price' => 10000],
+                ['name' => 'PETE GORENG', 'price' => 7000],
+                ['name' => 'NASI', 'price' => 5000],
             ],
-            'Makanan' => [
-                ['name' => 'Nasi Goreng Spesial', 'price' => 28000, 'stock' => 50, 'is_best_seller' => true],
-                ['name' => 'Mie Goreng', 'price' => 25000, 'stock' => 50],
-                ['name' => 'Ayam Geprek', 'price' => 27000, 'stock' => 50],
-                ['name' => 'Roti Bakar Cokelat', 'price' => 18000, 'stock' => 40],
-                ['name' => 'Roti Bakar Keju', 'price' => 20000, 'stock' => 40],
+            'Ngemil' => [
+                ['name' => 'KENTANG GORENG', 'price' => 12000],
+                ['name' => 'SOSIS GORENG', 'price' => 12000],
+                ['name' => 'NUGGET GORENG', 'price' => 12000],
+                ['name' => 'PEMPEK PALEMBANG', 'price' => 20000],
             ],
-            'Snack' => [
-                ['name' => 'Kentang Goreng', 'price' => 15000, 'stock' => 60],
-                ['name' => 'Pisang Goreng', 'price' => 12000, 'stock' => 60],
-                ['name' => 'Singkong Goreng', 'price' => 10000, 'stock' => 60],
+            'Minum' => [
+                ['name' => 'ES KUNIR ASEM', 'price' => 10000],
+                ['name' => 'ES BERAS KENCUR', 'price' => 10000],
+                ['name' => 'ES JERUK', 'price' => 10000],
+                ['name' => 'SQUASH LEMONADE', 'price' => 12000],
+                ['name' => 'ES SODA GEMBIRA', 'price' => 15000],
+                ['name' => 'ES MILO', 'price' => 10000],
+                ['name' => 'ES SUSU', 'price' => 8000],
+                ['name' => 'ES LIMUS/SYRUP', 'price' => 8000],
+                ['name' => 'ES TEH', 'price' => 5000],
+                ['name' => 'AIR MINERAL', 'price' => 5000],
             ],
-            'Dessert' => [
-                ['name' => 'Pudding Caramel', 'price' => 16000, 'stock' => 30],
-                ['name' => 'Brownies', 'price' => 18000, 'stock' => 30, 'is_best_seller' => true],
-                ['name' => 'Es Krim Vanilla', 'price' => 14000, 'stock' => 30],
+            'Request Sambal' => [
+                ['name' => 'SAMBAL LUCUNG', 'price' => 5000],
+                ['name' => 'SAMBAL BAWANG', 'price' => 5000],
+                ['name' => 'SAMBAL MENTAH', 'price' => 5000],
+                ['name' => 'SAMBAL MANGGA', 'price' => 5000],
             ],
         ];
 
@@ -53,8 +65,8 @@ class ProductSeeder extends Seeder
                     [
                         'description' => null,
                         'price' => $item['price'],
-                        'stock' => $item['stock'],
-                        'category' => strtolower($categoryName),
+                        'stock' => 99,
+                        'category' => strtolower(str_replace(' ', '_', $categoryName)),
                         'category_id' => $category->id,
                         'is_best_seller' => $item['is_best_seller'] ?? false,
                     ]

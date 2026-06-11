@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   final _searchCtrl = TextEditingController();
   int _activeCategoryId = 0; // 0 = "Semua"
   _ViewMode _view = _ViewMode.grid;
+  String _storeTitle = 'BEBEK GORENG CaK SLAMET';
 
   @override
   void initState() {
@@ -48,6 +49,11 @@ class _HomePageState extends State<HomePage> {
     context
         .read<CategoryBloc>()
         .add(const CategoryEvent.getCategoriesLocal());
+    AuthLocalDatasource().getReceiptBranding().then((b) {
+      if (b.storeName.isNotEmpty && mounted) {
+        setState(() => _storeTitle = b.storeName);
+      }
+    });
     // Auto-reconnect to last paired printer in background.
     AuthLocalDatasource().getPrinter().then((mac) async {
       if (mac.isNotEmpty) {
@@ -100,7 +106,11 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Column(
                   children: [
-                    _Header(today: today, cartCount: cart.totalQuantity),
+                    _Header(
+                      storeTitle: _storeTitle,
+                      today: today,
+                      cartCount: cart.totalQuantity,
+                    ),
                     _SearchAndScan(controller: _searchCtrl, onChanged: _onSearch),
                     _CategoryChipsRow(
                       activeId: _activeCategoryId,
@@ -139,9 +149,14 @@ class _HomePageState extends State<HomePage> {
 
 // ─── header ──────────────────────────────────────────────────────────────
 class _Header extends StatelessWidget {
+  final String storeTitle;
   final String today;
   final int cartCount;
-  const _Header({required this.today, required this.cartCount});
+  const _Header({
+    required this.storeTitle,
+    required this.today,
+    required this.cartCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +171,7 @@ class _Header extends StatelessWidget {
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
               child: Text(
-                'Sudut Kopi · Bandung',
+                storeTitle,
                 maxLines: 1,
                 style: AppTypography.titleL.copyWith(color: p.onSurface),
               ),

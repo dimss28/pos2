@@ -144,13 +144,13 @@ class AuthLocalDatasource {
   /// Simpan — after that, whatever they saved (including empty fields)
   /// is authoritative.
   static const ReceiptBranding _defaultBranding = ReceiptBranding(
-    storeName: 'POS',
+    storeName: 'BEBEK GORENG CaK SLAMET',
     addressLine1: '',
     addressLine2: '',
     email: '',
     phone: '',
-    footerLine1: '',
-    footerLine2: '',
+    footerLine1: 'Enak, Gurih, Nagih!',
+    footerLine2: 'Terima kasih atas kunjungan Anda',
   );
 
   Future<ReceiptBranding> getReceiptBranding() async {

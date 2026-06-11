@@ -60,6 +60,12 @@
             color: var(--on-surface);
             line-height: 1.2;
         }
+        .store-tagline {
+            margin-top: 2px;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
         .table-badge {
             flex-shrink: 0;
             background: var(--primary-container);
@@ -517,7 +523,10 @@
 
 <header class="header">
     <div class="header-top">
-        <div class="store-name">{{ config('app.name') }}</div>
+        <div class="store-name">{{ $storeName }}</div>
+        @if (!empty($storeTagline))
+            <div class="store-tagline">{{ $storeTagline }}</div>
+        @endif
         <div class="table-badge">{{ $table->label }}</div>
     </div>
     <div class="header-sub">Pilih menu & bayar dari HP Anda</div>

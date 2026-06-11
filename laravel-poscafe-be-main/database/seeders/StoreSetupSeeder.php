@@ -10,8 +10,9 @@ class StoreSetupSeeder extends Seeder
 {
     public function run(): void
     {
-        StoreSetting::set('store_name', 'Sudut Kopi');
-        StoreSetting::set('store_address', 'Bandung');
+        StoreSetting::set('store_name', 'BEBEK GORENG CaK SLAMET');
+        StoreSetting::set('store_tagline', 'Enak, Gurih, Nagih!');
+        StoreSetting::set('store_address', '');
         StoreSetting::set('transfer_bank_name', '');
         StoreSetting::set('transfer_account_number', '');
         StoreSetting::set('transfer_account_holder', '');
