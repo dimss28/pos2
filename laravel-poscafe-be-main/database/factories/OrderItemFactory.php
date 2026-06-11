@@ -15,7 +15,7 @@ class OrderItemFactory extends Factory
     public function definition(): array
     {
         $product = Product::inRandomOrder()->first() ?? Product::factory()->create();
-        $qty = fake()->numberBetween(1, 3);
+        $qty = $this->faker->numberBetween(1, 3);
 
         return [
             'order_id' => Order::factory(),

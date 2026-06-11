@@ -4,32 +4,44 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $password = Hash::make('12345678');
+        $users = [
+            [
+                'name' => 'Owner POS',
+                'email' => 'bahri@fic11.com',
+                'password' => '12345678',
+                'roles' => 'owner',
+            ],
+            [
+                'name' => 'Admin POS',
+                'email' => 'admin@fic11.com',
+                'password' => '12345678',
+                'roles' => 'admin',
+            ],
+            [
+                'name' => 'Kasir 1',
+                'email' => 'kasir@fic11.com',
+                'password' => '12345678',
+                'roles' => 'kasir',
+            ],
+        ];
 
-        User::factory()->owner()->create([
-            'name' => 'Owner POS',
-            'email' => 'bahri@fic11.com',
-            'password' => $password,
-        ]);
-
-        User::factory()->admin()->create([
-            'name' => 'Admin POS',
-            'email' => 'admin@fic11.com',
-            'password' => $password,
-        ]);
-
-        User::factory()->create([
-            'name' => 'Kasir 1',
-            'email' => 'kasir@fic11.com',
-            'password' => $password,
-            'roles' => 'kasir',
-        ]);
+        foreach ($users as $data) {
+            User::query()->updateOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'password' => $data['password'],
+                    'roles' => $data['roles'],
+                    'is_active' => true,
+                    'email_verified_at' => now(),
+                ]
+            );
+        }
 
         $this->call([
             CategorySeeder::class,

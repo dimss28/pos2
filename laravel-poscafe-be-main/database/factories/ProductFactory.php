@@ -13,19 +13,19 @@ class ProductFactory extends Factory
 {
     public function definition(): array
     {
-        $base = fake()->randomElement([
+        $base = $this->faker->randomElement([
             'Nasi Goreng', 'Mie Ayam', 'Bakso', 'Es Teh', 'Kopi Susu',
             'Roti Bakar', 'Pisang Goreng', 'Ayam Geprek', 'Soto Ayam', 'Sate Ayam',
         ]);
 
         return [
-            'name' => $base.' '.fake()->word(),
-            'description' => fake()->paragraph(2),
-            'price' => fake()->numberBetween(5, 50) * 1000,
-            'stock' => fake()->numberBetween(0, 100),
+            'name' => $base.' '.$this->faker->word(),
+            'description' => $this->faker->paragraph(2),
+            'price' => $this->faker->numberBetween(5, 50) * 1000,
+            'stock' => $this->faker->numberBetween(0, 100),
             'category' => 'food',
             'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
-            'is_best_seller' => fake()->boolean(20),
+            'is_best_seller' => $this->faker->boolean(20),
         ];
     }
 }
